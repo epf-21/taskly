@@ -2,3 +2,41 @@
 GET http://localhost:3000
 Content-Type: application/json
 
+###
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "efrainperalta.f@gmail.com",
+  "password": "Efrain123",
+  "fullName": "epf-21"
+}
+
+###
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "efrainperalta.f@gmail.com",
+  "password": "Efrain123",
+}
+
+
+###
+POST http://localhost:3000/auth/logout
+Content-Type: application/json
+Accept: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhOGFmNDFkNi0xMDM2LTRiYjUtOGVmNi1lMTI4YzkzYmZjYzgiLCJlbWFpbCI6ImVmcmFpbnBlcmFsdGEuZkBnbWFpbC5jb20iLCJpYXQiOjE3ODI5MTg5MjYsImV4cCI6MTc4MzUyMzcyNn0.W6zKBqXlj1v23af-gg2ugzxs4aw3tkpfrUGnVOGV1Kc"
+
+
+}
+
+###
+GET http://localhost:3000/users/me
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhOGFmNDFkNi0xMDM2LTRiYjUtOGVmNi1lMTI4YzkzYmZjYzgiLCJlbWFpbCI6ImVmcmFpbnBlcmFsdGEuZkBnbWFpbC5jb20iLCJpYXQiOjE3ODI5MTg5MjYsImV4cCI6MTc4MjkxOTgyNn0.jK7UXMn8Z9vWxlTBU54EAqlU0ER9vyi5PpFNq8ZwAEg
