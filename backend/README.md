@@ -637,11 +637,7 @@ Permite dar a un usuario un rol diferente al que tiene en el workspace, pero sol
 ### Base de datos
 
 - UUIDs como PKs (no secuenciales, más seguros para URLs públicas)
-- Fractional indexing en `position` (evita updates masivos al reordenar)
 - `ON DELETE CASCADE` / `SET NULL` / `RESTRICT` bien pensados para cada relación
-- Índices en todas las FKs y en columnas usadas frecuentemente en `WHERE`
-- `@updatedAt` de Prisma en lugar de triggers manuales para la mayoría de tablas
-- `cleanDatabase()` disponible en `PrismaService` para tests e2e, protegido contra producción
 
 ### Código
 
