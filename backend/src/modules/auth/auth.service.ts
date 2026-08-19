@@ -37,7 +37,13 @@ export class AuthService {
   }
 
   async login(dto: LoginDto, meta: RequestMeta = {}) {
-    const user = await this.userService.findByEmail(dto.email);
+    let user: UserModel | null;
+
+    try {
+      user = await this.userService.findByEmail(dto.email);
+    } catch {
+      user = null;
+    }
 
     if (!user || !user.isActive) {
       throw new UnauthorizedException('Credenciales incorrectas');
