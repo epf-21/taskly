@@ -45,7 +45,8 @@ describe('AuthService', () => {
     create: jest.fn(),
     findByToken: jest.fn(),
     updateByToken: jest.fn(),
-    updateById: jest.fn(),
+    revokeById: jest.fn(),
+    revokeAllByUserId: jest.fn(),
   };
 
   const mockUserService = {
@@ -222,7 +223,7 @@ describe('AuthService', () => {
       expect(mockAuthRepository.findByToken).toHaveBeenCalledWith(
         crypto.createHash('sha256').update('raw-refresh-token').digest('hex'),
       );
-      expect(mockAuthRepository.updateById).toHaveBeenCalledWith('rt-1', false);
+      expect(mockAuthRepository.revokeById).toHaveBeenCalledWith('rt-1');
       expect(result.accessToken).toBe('new-access-token');
       expect(result.refreshToken).toBe('new-refresh-token');
     });
@@ -283,7 +284,7 @@ describe('AuthService', () => {
     it('revoca todos los refresh tokens del usuario', async () => {
       await service.logoutAllDevices('user-1');
 
-      expect(mockAuthRepository.updateById).toHaveBeenCalledWith('user-1');
+      expect(mockAuthRepository.revokeAllByUserId).toHaveBeenCalledWith('user-1');
     });
   });
 });

@@ -78,7 +78,7 @@ export class AuthService {
 
     const user = await this.userService.findOne(userId);
 
-    await this.authRepository.updateById(storedToken.id, false);
+    await this.authRepository.revokeById(storedToken.id);
 
     return this.generateTokens(user, {
       userAgent: storedToken.userAgent ?? undefined,
@@ -93,7 +93,7 @@ export class AuthService {
   }
 
   async logoutAllDevices(userId: string): Promise<void> {
-    await this.authRepository.updateById(userId);
+    await this.authRepository.revokeAllByUserId(userId);
   }
 
   private async generateTokens(
