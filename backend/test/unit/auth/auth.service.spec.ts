@@ -134,13 +134,22 @@ describe('AuthService', () => {
       expect(result.accessToken).toBe('access-token');
       expect(result.refreshToken).toBe('refresh-token');
       expect(result.user.email).toBe('test@example.com');
-      expect(mockAuthRepository.create).toHaveBeenCalledWith({
-        userId: 'user-1',
-        tokenHash: expect.any(String),
-        userAgent: 'agent',
-        ipAddress: '1.2.3.4',
-        expiresAt: expect.any(Date),
-      });
+
+      const [storedToken] = mockAuthRepository.create.mock
+        .calls[0] as unknown as [
+        {
+          userId: string;
+          tokenHash: string;
+          userAgent: string;
+          ipAddress: string;
+          expiresAt: Date;
+        },
+      ];
+      expect(storedToken.userId).toBe('user-1');
+      expect(storedToken.tokenHash).toEqual(expect.any(String));
+      expect(storedToken.userAgent).toBe('agent');
+      expect(storedToken.ipAddress).toBe('1.2.3.4');
+      expect(storedToken.expiresAt).toBeInstanceOf(Date);
     });
   });
 
@@ -284,7 +293,9 @@ describe('AuthService', () => {
     it('revoca todos los refresh tokens del usuario', async () => {
       await service.logoutAllDevices('user-1');
 
-      expect(mockAuthRepository.revokeAllByUserId).toHaveBeenCalledWith('user-1');
+      expect(mockAuthRepository.revokeAllByUserId).toHaveBeenCalledWith(
+        'user-1',
+      );
     });
   });
 });
