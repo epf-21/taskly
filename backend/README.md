@@ -367,14 +367,14 @@ bun run build && bun run start:prod
 - [x] Decorator `@CurrentUser()` para extraer el usuario del request
 - [x] Interfaz `AuthenticatedRequest` tipada
 
-### Fase 2 — Workspaces y permisos _(en progreso)_
+### Fase 2 — Workspaces y permisos
 
-- [ ] CRUD de workspaces
-- [ ] `WorkspaceMember` (el creador se vuelve `owner` automáticamente)
-- [ ] `WorkspaceRolesGuard` + decorator `@RequireWorkspaceRole()`
-- [ ] Gestión de miembros (listar, cambiar rol, remover)
-- [ ] Invitaciones por email/link con expiración
-- [ ] `BoardRolesGuard` (override opcional de rol a nivel de board)
+- [x] CRUD de workspaces
+- [x] `WorkspaceMember` (el creador se vuelve `owner` automáticamente)
+- [x] `WorkspaceRolesGuard` + decorator `@RequireWorkspaceRole()`
+- [x] Gestión de miembros (listar, cambiar rol, remover)
+- [x] Invitaciones por email/link con expiración
+- [x] `BoardRolesGuard` (override opcional de rol a nivel de board)
 
 ### Fase 3 — Boards y columnas
 
