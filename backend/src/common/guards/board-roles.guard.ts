@@ -40,7 +40,22 @@ export class BoardRolesGuard implements CanActivate {
       .switchToHttp()
       .getRequest<AuthenticatedRequest & { params: Record<string, string> }>();
     const userId = request.user?.id;
-    const boardId = request.params.boardId ?? request.params.id;
+
+    let boardId = request.params.boardId ?? request.params.id;
+
+    const columnId = request.params.columnId;
+    if (!boardId && columnId) {
+      const column = await this.prisma.column.findUnique({
+        where: { id: columnId },
+        select: { boardId: true },
+      });
+
+      if (!column) {
+        throw new NotFoundException('Columna no encontrada');
+      }
+
+      boardId = column.boardId;
+    }
 
     if (!userId || !boardId) {
       throw new ForbiddenException('Acceso denegado');
