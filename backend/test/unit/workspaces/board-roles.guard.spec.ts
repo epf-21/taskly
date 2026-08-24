@@ -32,6 +32,9 @@ describe('BoardRolesGuard', () => {
     board: {
       findUnique: jest.fn(),
     },
+    column: {
+      findUnique: jest.fn(),
+    },
     workspaceMember: {
       findUnique: jest.fn(),
     },
@@ -128,5 +131,37 @@ describe('BoardRolesGuard', () => {
     await expect(
       guard.canActivate(createMockContext({ id: 'u1' }, { boardId: 'b-1' })),
     ).rejects.toThrow(ForbiddenException);
+  });
+
+  it('resuelve el board desde columnId cuando la ruta es de columna', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue('admin');
+    mockPrisma.column.findUnique.mockResolvedValue({ boardId: 'b-1' });
+    mockPrisma.board.findUnique.mockResolvedValue({
+      id: 'b-1',
+      workspaceId: 'ws-1',
+    });
+    mockPrisma.workspaceMember.findUnique.mockResolvedValue({ role: 'owner' });
+    mockPrisma.boardMember.findUnique.mockResolvedValue(null);
+
+    const result = await guard.canActivate(
+      createMockContext({ id: 'u1' }, { columnId: 'c-1' }),
+    );
+
+    expect(mockPrisma.column.findUnique).toHaveBeenCalledWith({
+      where: { id: 'c-1' },
+      select: { boardId: true },
+    });
+    expect(result).toBe(true);
+  });
+
+  it('lanza NotFoundException si la columna no existe', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue('member');
+    mockPrisma.column.findUnique.mockResolvedValue(null);
+
+    await expect(
+      guard.canActivate(
+        createMockContext({ id: 'u1' }, { columnId: 'missing' }),
+      ),
+    ).rejects.toThrow(new NotFoundException('Columna no encontrada'));
   });
 });
