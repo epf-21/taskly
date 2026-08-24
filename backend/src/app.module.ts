@@ -11,6 +11,8 @@ import {
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { WorkspacesModule } from './modules/workspaces/workspaces.module';
+import { BoardsModule } from './modules/boards/boards.module';
+import { ColumnsModule } from './modules/columns/columns.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     UsersModule,
     AuthModule,
     WorkspacesModule,
+    BoardsModule,
+    ColumnsModule,
   ],
   controllers: [],
   providers: [],
