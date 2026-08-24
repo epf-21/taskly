@@ -378,10 +378,10 @@ bun run build && bun run start:prod
 
 ### Fase 3 — Boards y columnas
 
-- [ ] CRUD de boards dentro de un workspace
-- [ ] CRUD de columnas con fractional indexing
-- [ ] Reordenar columnas
-- [ ] `fractional-index.util.ts`
+- [x] CRUD de boards dentro de un workspace
+- [x] CRUD de columnas con fractional indexing
+- [x] Reordenar columnas
+- [x] `fractional-index.util.ts`
 
 ### Fase 4 — Tasks (núcleo del producto)
 
