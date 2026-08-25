@@ -13,6 +13,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { WorkspacesModule } from './modules/workspaces/workspaces.module';
 import { BoardsModule } from './modules/boards/boards.module';
 import { ColumnsModule } from './modules/columns/columns.module';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { LabelsModule } from './modules/labels/labels.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { ColumnsModule } from './modules/columns/columns.module';
     WorkspacesModule,
     BoardsModule,
     ColumnsModule,
+    TasksModule,
+    LabelsModule,
   ],
   controllers: [],
   providers: [],
