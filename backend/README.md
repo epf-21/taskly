@@ -385,14 +385,14 @@ bun run build && bun run start:prod
 
 ### Fase 4 — Tasks (núcleo del producto)
 
-- [ ] CRUD de tareas dentro de una columna
-- [ ] Mover tarea entre columnas (recalcula `position`)
-- [ ] Reordenar tareas dentro de la misma columna
-- [ ] Asignar usuarios a tareas (`task_assignees`)
-- [ ] Asignar etiquetas a tareas (`task_labels`)
-- [ ] CRUD de etiquetas por workspace
-- [ ] Filtros: asignado, etiqueta, prioridad
-- [ ] Búsqueda por texto (índice trigram de PostgreSQL)
+- [x] CRUD de tareas dentro de una columna
+- [x] Mover tarea entre columnas (recalcula `position`)
+- [x] Reordenar tareas dentro de la misma columna
+- [x] Asignar usuarios a tareas (`task_assignees`)
+- [x] Asignar etiquetas a tareas (`task_labels`)
+- [x] CRUD de etiquetas por workspace
+- [x] Filtros: asignado, etiqueta, prioridad
+- [x] Búsqueda por texto (índice trigram de PostgreSQL)
 
 ### Fase 5 — Sub-recursos de tasks
 
