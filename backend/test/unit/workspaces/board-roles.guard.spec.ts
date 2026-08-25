@@ -35,6 +35,9 @@ describe('BoardRolesGuard', () => {
     column: {
       findUnique: jest.fn(),
     },
+    task: {
+      findUnique: jest.fn(),
+    },
     workspaceMember: {
       findUnique: jest.fn(),
     },
@@ -163,5 +166,35 @@ describe('BoardRolesGuard', () => {
         createMockContext({ id: 'u1' }, { columnId: 'missing' }),
       ),
     ).rejects.toThrow(new NotFoundException('Columna no encontrada'));
+  });
+
+  it('resuelve el board desde taskId cuando la ruta es de tarea', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue('member');
+    mockPrisma.task.findUnique.mockResolvedValue({ boardId: 'b-1' });
+    mockPrisma.board.findUnique.mockResolvedValue({
+      id: 'b-1',
+      workspaceId: 'ws-1',
+    });
+    mockPrisma.workspaceMember.findUnique.mockResolvedValue({ role: 'member' });
+    mockPrisma.boardMember.findUnique.mockResolvedValue(null);
+
+    const result = await guard.canActivate(
+      createMockContext({ id: 'u1' }, { taskId: 't-1' }),
+    );
+
+    expect(mockPrisma.task.findUnique).toHaveBeenCalledWith({
+      where: { id: 't-1' },
+      select: { boardId: true },
+    });
+    expect(result).toBe(true);
+  });
+
+  it('lanza NotFoundException si la tarea no existe', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue('member');
+    mockPrisma.task.findUnique.mockResolvedValue(null);
+
+    await expect(
+      guard.canActivate(createMockContext({ id: 'u1' }, { taskId: 'missing' })),
+    ).rejects.toThrow(new NotFoundException('Tarea no encontrada'));
   });
 });
