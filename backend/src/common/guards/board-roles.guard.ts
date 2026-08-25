@@ -41,9 +41,9 @@ export class BoardRolesGuard implements CanActivate {
       .getRequest<AuthenticatedRequest & { params: Record<string, string> }>();
     const userId = request.user?.id;
 
-    let boardId = request.params.boardId ?? request.params.id;
-
+    let boardId = request.params.boardId;
     const columnId = request.params.columnId;
+
     if (!boardId && columnId) {
       const column = await this.prisma.column.findUnique({
         where: { id: columnId },
@@ -55,6 +55,20 @@ export class BoardRolesGuard implements CanActivate {
       }
 
       boardId = column.boardId;
+    }
+
+    const taskId = request.params.taskId;
+    if (!boardId && taskId) {
+      const task = await this.prisma.task.findUnique({
+        where: { id: taskId },
+        select: { boardId: true },
+      });
+
+      if (!task) {
+        throw new NotFoundException('Tarea no encontrada');
+      }
+
+      boardId = task.boardId;
     }
 
     if (!userId || !boardId) {
