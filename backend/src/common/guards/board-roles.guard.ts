@@ -71,6 +71,51 @@ export class BoardRolesGuard implements CanActivate {
       boardId = task.boardId;
     }
 
+    const checklistId = request.params.checklistId;
+    if (!boardId && checklistId) {
+      const checklist = await this.prisma.checklist.findUnique({
+        where: { id: checklistId },
+        select: { task: { select: { boardId: true } } },
+      });
+
+      if (!checklist) {
+        throw new NotFoundException('Checklist no encontrado');
+      }
+
+      boardId = checklist.task.boardId;
+    }
+
+    const checklistItemId =
+      request.params.itemId ?? request.params.checklistItemId;
+    if (!boardId && checklistItemId) {
+      const item = await this.prisma.checklistItem.findUnique({
+        where: { id: checklistItemId },
+        select: {
+          checklist: { select: { task: { select: { boardId: true } } } },
+        },
+      });
+
+      if (!item) {
+        throw new NotFoundException('Ítem de checklist no encontrado');
+      }
+
+      boardId = item.checklist.task.boardId;
+    }
+
+    const commentId = request.params.commentId;
+    if (!boardId && commentId) {
+      const comment = await this.prisma.comment.findUnique({
+        where: { id: commentId },
+        select: { task: { select: { boardId: true } } },
+      });
+
+      if (!comment) {
+        throw new NotFoundException('Comentario no encontrado');
+      }
+
+      boardId = comment.task.boardId;
+    }
+
     if (!userId || !boardId) {
       throw new ForbiddenException('Acceso denegado');
     }
