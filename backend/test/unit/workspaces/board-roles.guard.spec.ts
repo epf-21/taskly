@@ -38,6 +38,15 @@ describe('BoardRolesGuard', () => {
     task: {
       findUnique: jest.fn(),
     },
+    checklist: {
+      findUnique: jest.fn(),
+    },
+    checklistItem: {
+      findUnique: jest.fn(),
+    },
+    comment: {
+      findUnique: jest.fn(),
+    },
     workspaceMember: {
       findUnique: jest.fn(),
     },
@@ -196,5 +205,47 @@ describe('BoardRolesGuard', () => {
     await expect(
       guard.canActivate(createMockContext({ id: 'u1' }, { taskId: 'missing' })),
     ).rejects.toThrow(new NotFoundException('Tarea no encontrada'));
+  });
+
+  it('resuelve el board desde un comentario', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue('member');
+    mockPrisma.comment.findUnique.mockResolvedValue({
+      task: { boardId: 'b-1' },
+    });
+    mockPrisma.board.findUnique.mockResolvedValue({
+      id: 'b-1',
+      workspaceId: 'ws-1',
+    });
+    mockPrisma.workspaceMember.findUnique.mockResolvedValue({
+      role: 'member',
+    });
+    mockPrisma.boardMember.findUnique.mockResolvedValue(null);
+
+    const result = await guard.canActivate(
+      createMockContext({ id: 'u1' }, { commentId: 'comment-1' }),
+    );
+
+    expect(result).toBe(true);
+  });
+
+  it('resuelve el board desde un ítem de checklist', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue('member');
+    mockPrisma.checklistItem.findUnique.mockResolvedValue({
+      checklist: { task: { boardId: 'b-1' } },
+    });
+    mockPrisma.board.findUnique.mockResolvedValue({
+      id: 'b-1',
+      workspaceId: 'ws-1',
+    });
+    mockPrisma.workspaceMember.findUnique.mockResolvedValue({
+      role: 'member',
+    });
+    mockPrisma.boardMember.findUnique.mockResolvedValue(null);
+
+    const result = await guard.canActivate(
+      createMockContext({ id: 'u1' }, { itemId: 'item-1' }),
+    );
+
+    expect(result).toBe(true);
   });
 });
