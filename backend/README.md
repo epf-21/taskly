@@ -396,9 +396,9 @@ bun run build && bun run start:prod
 
 ### Fase 5 — Sub-recursos de tasks
 
-- [ ] Comentarios (crear, editar, eliminar)
-- [ ] Checklists (crear listas, agregar ítems, toggle de completado)
-- [ ] Archivos adjuntos (registrar nombre, URL, tamaño, tipo MIME)
+- [x] Comentarios (crear, editar, eliminar)
+- [x] Checklists (crear listas, agregar ítems, toggle de completado)
+- [x] Archivos adjuntos (registrar nombre, URL, tamaño, tipo MIME)
 
 ### Fase 6 — Activity log y notificaciones
 
@@ -496,7 +496,7 @@ Tarjetas dentro de una columna.
 - `POST /tasks/:id/labels` — Agregar etiqueta
 - `DELETE /tasks/:id/labels/:labelId` — Quitar etiqueta
 
-### Comments, Checklists, Attachments _(próximamente)_
+### Comments, Checklists, Attachments
 
 Sub-recursos de una tarea.
 
