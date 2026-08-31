@@ -402,10 +402,10 @@ bun run build && bun run start:prod
 
 ### Fase 6 — Activity log y notificaciones
 
-- [ ] `ActivityService.log()` inyectable en otros servicios
-- [ ] Feed de actividad por workspace / board / tarea
-- [ ] Notificaciones: tarea asignada, mención en comentario, tarea próxima a vencer
-- [ ] Marcar notificaciones como leídas
+- [x] `ActivityService.log()` inyectable en otros servicios
+- [x] Feed de actividad por workspace / board / tarea
+- [x] Notificaciones: tarea asignada, mención en comentario, tarea próxima a vencer
+- [x] Marcar notificaciones como leídas
 
 ### Fase 7 — Tiempo real (WebSockets)
 
