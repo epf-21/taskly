@@ -121,6 +121,15 @@ export class TasksRepository {
     });
   }
 
+  findAssigneeIds(taskId: string): Promise<string[]> {
+    return this.prisma.taskAssignee
+      .findMany({
+        where: { taskId },
+        select: { userId: true },
+      })
+      .then((assignees) => assignees.map((assignee) => assignee.userId));
+  }
+
   addAssignee(taskId: string, userId: string): Promise<TaskAssigneeModel> {
     return this.prisma.taskAssignee.create({ data: { taskId, userId } });
   }

@@ -4,9 +4,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { ActivityAction } from 'src/generated/prisma/enums';
 import type { TaskModel } from 'src/generated/prisma/models';
 import { calculatePosition } from 'src/shared/utils/fractional-index.util';
+import { ActivityService } from '../activity/activity.service';
 import { ColumnsRepository } from '../columns/columns.repository';
+import { NotificationsService } from '../notifications/notifications.service';
 import { CreateAssigneeDto } from './dto/create-assignee.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { CreateTaskLabelDto } from './dto/create-task-label.dto';
@@ -20,6 +24,9 @@ export class TasksService {
   constructor(
     private readonly tasksRepository: TasksRepository,
     private readonly columnsRepository: ColumnsRepository,
+    private readonly activityService: ActivityService,
+    private readonly notificationsService: NotificationsService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async create(
@@ -31,7 +38,7 @@ export class TasksService {
     const lastPosition = await this.tasksRepository.findLastPosition(column.id);
     const position = calculatePosition(lastPosition);
 
-    return this.tasksRepository.create({
+    const task = await this.tasksRepository.create({
       columnId: column.id,
       boardId: column.boardId,
       title: dto.title,
@@ -41,6 +48,22 @@ export class TasksService {
       createdBy: userId,
       position,
     });
+
+    const workspaceId = await this.getWorkspaceIdForBoard(column.boardId);
+    await this.activityService.log({
+      workspaceId,
+      boardId: column.boardId,
+      taskId: task.id,
+      userId,
+      action: ActivityAction.task_created,
+      metadata: { title: task.title, priority: task.priority },
+    });
+
+    if (task.dueDate) {
+      await this.notifyAboutDueSoon(task, [userId]);
+    }
+
+    return task;
   }
 
   findManyByBoard(
@@ -62,8 +85,9 @@ export class TasksService {
 
   async update(taskId: string, dto: UpdateTaskDto): Promise<TaskModel> {
     const task = await this.findExisting(taskId);
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
 
-    return this.tasksRepository.update(task.id, {
+    const updatedTask = await this.tasksRepository.update(task.id, {
       title: dto.title,
       description: dto.description,
       priority: dto.priority,
@@ -74,6 +98,22 @@ export class TasksService {
             ? new Date(dto.dueDate)
             : null,
     });
+
+    await this.activityService.log({
+      workspaceId,
+      boardId: task.boardId,
+      taskId: task.id,
+      userId: undefined,
+      action: ActivityAction.task_updated,
+      metadata: { title: updatedTask.title, changedFields: Object.keys(dto) },
+    });
+
+    if (updatedTask.dueDate) {
+      const assignees = await this.tasksRepository.findAssigneeIds(task.id);
+      await this.notifyAboutDueSoon(updatedTask, assignees);
+    }
+
+    return updatedTask;
   }
 
   async move(taskId: string, dto: MoveTaskDto): Promise<TaskModel> {
@@ -126,15 +166,38 @@ export class TasksService {
 
     const position = calculatePosition(before?.position, after?.position);
 
-    return this.tasksRepository.update(task.id, {
+    const movedTask = await this.tasksRepository.update(task.id, {
       columnId: targetColumnId,
       position,
     });
+
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
+    await this.activityService.log({
+      workspaceId,
+      boardId: task.boardId,
+      taskId: task.id,
+      userId: undefined,
+      action: ActivityAction.task_moved,
+      metadata: { fromColumnId: task.columnId, toColumnId: targetColumnId },
+    });
+
+    return movedTask;
   }
+
   async archive(taskId: string): Promise<void> {
     const task = await this.findExisting(taskId);
 
     await this.tasksRepository.update(task.id, { isArchived: true });
+
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
+    await this.activityService.log({
+      workspaceId,
+      boardId: task.boardId,
+      taskId: task.id,
+      userId: undefined,
+      action: ActivityAction.task_archived,
+      metadata: { title: task.title },
+    });
   }
 
   async addAssignee(taskId: string, dto: CreateAssigneeDto): Promise<void> {
@@ -161,10 +224,27 @@ export class TasksService {
     }
 
     await this.tasksRepository.addAssignee(task.id, dto.userId);
+
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
+    await this.activityService.log({
+      workspaceId,
+      boardId: task.boardId,
+      taskId: task.id,
+      userId: dto.userId,
+      action: ActivityAction.task_assigned,
+      metadata: { assignedUserId: dto.userId, title: task.title },
+    });
+
+    await this.notificationsService.createAssignedNotification(dto.userId, {
+      id: task.id,
+      title: task.title,
+      boardId: task.boardId,
+      workspaceId,
+    });
   }
 
   async removeAssignee(taskId: string, assigneeId: string): Promise<void> {
-    await this.findExisting(taskId);
+    const task = await this.findExisting(taskId);
 
     const existing = await this.tasksRepository.findAssignee(
       taskId,
@@ -176,6 +256,16 @@ export class TasksService {
     }
 
     await this.tasksRepository.removeAssignee(taskId, assigneeId);
+
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
+    await this.activityService.log({
+      workspaceId,
+      boardId: task.boardId,
+      taskId: task.id,
+      userId: assigneeId,
+      action: ActivityAction.task_unassigned,
+      metadata: { unassignedUserId: assigneeId, title: task.title },
+    });
   }
 
   async addLabel(taskId: string, dto: CreateTaskLabelDto): Promise<void> {
@@ -202,10 +292,20 @@ export class TasksService {
     }
 
     await this.tasksRepository.addTaskLabel(task.id, label.id);
+
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
+    await this.activityService.log({
+      workspaceId,
+      boardId: task.boardId,
+      taskId: task.id,
+      userId: undefined,
+      action: ActivityAction.label_created,
+      metadata: { labelId: label.id, labelName: label.name, taskId: task.id },
+    });
   }
 
   async removeLabel(taskId: string, labelId: string): Promise<void> {
-    await this.findExisting(taskId);
+    const task = await this.findExisting(taskId);
 
     const existing = await this.tasksRepository.findTaskLabel(taskId, labelId);
 
@@ -214,6 +314,57 @@ export class TasksService {
     }
 
     await this.tasksRepository.removeTaskLabel(taskId, labelId);
+
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
+    await this.activityService.log({
+      workspaceId,
+      boardId: task.boardId,
+      taskId: task.id,
+      userId: undefined,
+      action: ActivityAction.label_deleted,
+      metadata: { labelId, taskId: task.id },
+    });
+  }
+
+  private async notifyAboutDueSoon(
+    task: Pick<TaskModel, 'id' | 'title' | 'dueDate' | 'boardId'>,
+    userIds: string[],
+  ): Promise<void> {
+    if (!task.dueDate) {
+      return;
+    }
+
+    const workspaceId = await this.getWorkspaceIdForBoard(task.boardId);
+    const dueDate = new Date(task.dueDate);
+    const now = new Date();
+    const diffHours = (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    if (diffHours <= 24 && diffHours >= 0) {
+      await Promise.all(
+        userIds.map((userId) =>
+          this.notificationsService.createDueSoonNotification(userId, {
+            id: task.id,
+            title: task.title,
+            dueDate,
+            boardId: task.boardId,
+            workspaceId,
+          }),
+        ),
+      );
+    }
+  }
+
+  private async getWorkspaceIdForBoard(boardId: string): Promise<string> {
+    const board = await this.prisma.board.findUnique({
+      where: { id: boardId },
+      select: { workspaceId: true },
+    });
+
+    if (!board) {
+      throw new NotFoundException('Board no encontrado');
+    }
+
+    return board.workspaceId;
   }
 
   private async findExisting(taskId: string): Promise<TaskModel> {

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ActivityModule } from '../../activity/activity.module';
 import {
   ChecklistItemController,
   ChecklistItemsController,
@@ -8,6 +9,7 @@ import { ChecklistsRepository } from './checklists.repository';
 import { ChecklistsService } from './checklists.service';
 
 @Module({
+  imports: [ActivityModule],
   controllers: [
     ChecklistsController,
     ChecklistItemsController,

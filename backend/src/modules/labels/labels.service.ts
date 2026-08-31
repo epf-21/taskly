@@ -3,14 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ActivityAction } from 'src/generated/prisma/enums';
+import type { LabelModel } from 'src/generated/prisma/models';
+import { ActivityService } from '../activity/activity.service';
 import { CreateLabelDto } from './dto/create-label.dto';
 import { UpdateLabelDto } from './dto/update-label.dto';
 import { LabelsRepository } from './labels.repository';
-import type { LabelModel } from 'src/generated/prisma/models';
 
 @Injectable()
 export class LabelsService {
-  constructor(private readonly labelsRepository: LabelsRepository) {}
+  constructor(
+    private readonly labelsRepository: LabelsRepository,
+    private readonly activityService: ActivityService,
+  ) {}
 
   async create(workspaceId: string, dto: CreateLabelDto): Promise<LabelModel> {
     const existing = await this.labelsRepository.findByName(
@@ -24,11 +29,19 @@ export class LabelsService {
       );
     }
 
-    return this.labelsRepository.create({
+    const label = await this.labelsRepository.create({
       workspaceId,
       name: dto.name,
       color: dto.color,
     });
+
+    await this.activityService.log({
+      workspaceId,
+      action: ActivityAction.label_created,
+      metadata: { labelId: label.id, name: label.name },
+    });
+
+    return label;
   }
 
   findAll(workspaceId: string): Promise<LabelModel[]> {
@@ -55,13 +68,31 @@ export class LabelsService {
       }
     }
 
-    return this.labelsRepository.update(label.id, dto);
+    const updatedLabel = await this.labelsRepository.update(label.id, dto);
+
+    await this.activityService.log({
+      workspaceId,
+      action: ActivityAction.label_created,
+      metadata: {
+        labelId: updatedLabel.id,
+        previousName: label.name,
+        newName: updatedLabel.name,
+      },
+    });
+
+    return updatedLabel;
   }
 
   async remove(workspaceId: string, labelId: string): Promise<void> {
     const label = await this.findInWorkspace(workspaceId, labelId);
 
     await this.labelsRepository.delete(label.id);
+
+    await this.activityService.log({
+      workspaceId,
+      action: ActivityAction.label_deleted,
+      metadata: { labelId: label.id, name: label.name },
+    });
   }
 
   private async findInWorkspace(workspaceId: string, labelId: string) {

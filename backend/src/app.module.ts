@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from './database/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { PrismaModule } from './database/prisma.module';
 import { envValidationSchema } from './config/env.validation';
 import {
   appConfig,
@@ -15,6 +16,8 @@ import { BoardsModule } from './modules/boards/boards.module';
 import { ColumnsModule } from './modules/columns/columns.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { LabelsModule } from './modules/labels/labels.module';
+import { ActivityModule } from './modules/activity/activity.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -28,6 +31,7 @@ import { LabelsModule } from './modules/labels/labels.module';
       },
       load: [appConfig, jwtConfig, databaseConfig, redisConfig],
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     UsersModule,
     AuthModule,
@@ -36,6 +40,8 @@ import { LabelsModule } from './modules/labels/labels.module';
     ColumnsModule,
     TasksModule,
     LabelsModule,
+    ActivityModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [],
