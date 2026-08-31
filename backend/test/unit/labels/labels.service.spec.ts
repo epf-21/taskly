@@ -1,5 +1,6 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ActivityService } from 'src/modules/activity/activity.service';
 import { CreateLabelDto } from 'src/modules/labels/dto/create-label.dto';
 import { UpdateLabelDto } from 'src/modules/labels/dto/update-label.dto';
 import { LabelsRepository } from 'src/modules/labels/labels.repository';
@@ -26,11 +27,16 @@ describe('LabelsService', () => {
     delete: jest.fn(),
   };
 
+  const mockActivityService = {
+    log: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LabelsService,
         { provide: LabelsRepository, useValue: mockRepository },
+        { provide: ActivityService, useValue: mockActivityService },
       ],
     }).compile();
 

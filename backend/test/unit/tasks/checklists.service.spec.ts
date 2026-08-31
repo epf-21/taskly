@@ -1,5 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from 'src/database/prisma.service';
+import { ActivityService } from 'src/modules/activity/activity.service';
 import { ChecklistsRepository } from 'src/modules/tasks/checklists/checklists.repository';
 import { ChecklistsService } from 'src/modules/tasks/checklists/checklists.service';
 
@@ -16,15 +18,31 @@ describe('ChecklistsService', () => {
     toggleItem: jest.fn(),
   };
 
+  const mockActivityService = { log: jest.fn() };
+  const mockPrismaService = {
+    task: {
+      findUnique: jest.fn().mockResolvedValue({
+        boardId: 'board-1',
+        board: { workspaceId: 'ws-1' },
+      }),
+    },
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ChecklistsService,
         { provide: ChecklistsRepository, useValue: repository },
+        { provide: ActivityService, useValue: mockActivityService },
+        { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
     service = module.get(ChecklistsService);
     jest.clearAllMocks();
+    mockPrismaService.task.findUnique.mockResolvedValue({
+      boardId: 'board-1',
+      board: { workspaceId: 'ws-1' },
+    });
   });
 
   it('crea una checklist al final de la tarea', async () => {

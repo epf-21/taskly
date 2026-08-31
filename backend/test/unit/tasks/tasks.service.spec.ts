@@ -4,7 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from 'src/database/prisma.service';
+import { ActivityService } from 'src/modules/activity/activity.service';
 import { ColumnsRepository } from 'src/modules/columns/columns.repository';
+import { NotificationsService } from 'src/modules/notifications/notifications.service';
 import { CreateAssigneeDto } from 'src/modules/tasks/dto/create-assignee.dto';
 import { CreateTaskDto } from 'src/modules/tasks/dto/create-task.dto';
 import { MoveTaskDto } from 'src/modules/tasks/dto/move-task.dto';
@@ -49,6 +52,7 @@ describe('TasksService', () => {
     update: jest.fn(),
     findLastPosition: jest.fn(),
     findAssignee: jest.fn(),
+    findAssigneeIds: jest.fn(),
     addAssignee: jest.fn(),
     removeAssignee: jest.fn(),
     findTaskLabel: jest.fn(),
@@ -62,17 +66,36 @@ describe('TasksService', () => {
     findById: jest.fn(),
   };
 
+  const mockActivityService = {
+    log: jest.fn(),
+  };
+
+  const mockNotificationsService = {
+    createAssignedNotification: jest.fn(),
+    createDueSoonNotification: jest.fn(),
+  };
+
+  const mockPrismaService = {
+    board: {
+      findUnique: jest.fn().mockResolvedValue({ workspaceId: 'w-1' }),
+    },
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TasksService,
         { provide: TasksRepository, useValue: mockTasksRepository },
         { provide: ColumnsRepository, useValue: mockColumnsRepository },
+        { provide: ActivityService, useValue: mockActivityService },
+        { provide: NotificationsService, useValue: mockNotificationsService },
+        { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
 
     service = module.get<TasksService>(TasksService);
     jest.resetAllMocks();
+    mockPrismaService.board.findUnique.mockResolvedValue({ workspaceId: 'w-1' });
   });
 
   it('should be defined', () => {

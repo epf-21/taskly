@@ -1,8 +1,9 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ActivityService } from 'src/modules/activity/activity.service';
+import { BoardsRepository } from 'src/modules/boards/boards.repository';
 import { CreateBoardDto } from 'src/modules/boards/dto/create-board.dto';
 import { UpdateBoardDto } from 'src/modules/boards/dto/update-board.dto';
-import { BoardsRepository } from 'src/modules/boards/boards.repository';
 import { BoardsService } from 'src/modules/boards/boards.service';
 
 const mockBoard = {
@@ -27,11 +28,16 @@ describe('BoardsService', () => {
     update: jest.fn(),
   };
 
+  const mockActivityService = {
+    log: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BoardsService,
         { provide: BoardsRepository, useValue: mockRepository },
+        { provide: ActivityService, useValue: mockActivityService },
       ],
     }).compile();
 

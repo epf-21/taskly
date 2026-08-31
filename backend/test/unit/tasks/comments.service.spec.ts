@@ -1,5 +1,8 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from 'src/database/prisma.service';
+import { ActivityService } from 'src/modules/activity/activity.service';
+import { NotificationsService } from 'src/modules/notifications/notifications.service';
 import { CommentsRepository } from 'src/modules/tasks/comments/comments.repository';
 import { CommentsService } from 'src/modules/tasks/comments/comments.service';
 
@@ -13,15 +16,39 @@ describe('CommentsService', () => {
     delete: jest.fn(),
   };
 
+  const mockActivityService = { log: jest.fn() };
+  const mockNotificationsService = { createMentionNotifications: jest.fn() };
+  const mockPrismaService = {
+    task: {
+      findUnique: jest.fn().mockResolvedValue({
+        id: 'task-1',
+        boardId: 'board-1',
+        board: { workspaceId: 'ws-1' },
+      }),
+    },
+    user: {
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CommentsService,
         { provide: CommentsRepository, useValue: repository },
+        { provide: ActivityService, useValue: mockActivityService },
+        { provide: NotificationsService, useValue: mockNotificationsService },
+        { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
     service = module.get(CommentsService);
     jest.clearAllMocks();
+    mockPrismaService.task.findUnique.mockResolvedValue({
+      id: 'task-1',
+      boardId: 'board-1',
+      board: { workspaceId: 'ws-1' },
+    });
+    mockPrismaService.user.findMany.mockResolvedValue([]);
   });
 
   it('crea un comentario para la tarea', async () => {
