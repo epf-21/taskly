@@ -5,7 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import type { WorkspaceRole } from 'src/generated/prisma/enums';
+import {
+  InvitationCreatedEvent,
+  MAIL_EVENTS,
+} from 'src/modules/mail/mail.events';
 import { WorkspacesRepository } from '../workspaces.repository';
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
@@ -24,6 +29,7 @@ export class InvitationsService {
   constructor(
     private readonly invitationsRepository: InvitationsRepository,
     private readonly workspacesRepository: WorkspacesRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(
@@ -61,7 +67,7 @@ export class InvitationsService {
       );
     }
 
-    return this.invitationsRepository.create({
+    const invitation = await this.invitationsRepository.create({
       workspaceId,
       invitedEmail: dto.email,
       invitedBy,
@@ -71,6 +77,20 @@ export class InvitationsService {
         Date.now() + INVITATION_EXPIRATION_DAYS * 24 * 60 * 60 * 1000,
       ),
     });
+
+    this.eventEmitter.emit(
+      MAIL_EVENTS.invitationCreated,
+      new InvitationCreatedEvent(
+        invitation.id,
+        invitation.workspaceId,
+        invitation.invitedEmail,
+        invitation.role,
+        invitation.token,
+        invitation.expiresAt,
+      ),
+    );
+
+    return invitation;
   }
 
   async accept(

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './database/prisma.module';
 import { envValidationSchema } from './config/env.validation';
@@ -7,6 +8,7 @@ import {
   appConfig,
   jwtConfig,
   databaseConfig,
+  mailConfig,
   redisConfig,
 } from './config/app.config';
 import { UsersModule } from './modules/users/users.module';
@@ -18,6 +20,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
 import { LabelsModule } from './modules/labels/labels.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -29,8 +32,9 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
         abortEarly: false,
         allowUnknown: true,
       },
-      load: [appConfig, jwtConfig, databaseConfig, redisConfig],
+      load: [appConfig, jwtConfig, databaseConfig, redisConfig, mailConfig],
     }),
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     PrismaModule,
     UsersModule,
@@ -42,6 +46,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     LabelsModule,
     ActivityModule,
     NotificationsModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],

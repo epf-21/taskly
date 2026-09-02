@@ -36,7 +36,9 @@ export class TaskDueSoonScheduler {
     });
 
     for (const task of tasks) {
-      const userIds = [...new Set(task.assignees.map((assignee) => assignee.userId))];
+      const userIds = [
+        ...new Set(task.assignees.map((assignee) => assignee.userId)),
+      ];
 
       if (userIds.length === 0) {
         continue;
@@ -54,13 +56,15 @@ export class TaskDueSoonScheduler {
       const notifiedByUser = new Map<string, Set<string>>();
 
       for (const notification of existingNotifications) {
-        const taskId = (notification.payload as Record<string, unknown>)?.taskId;
+        const taskId = (notification.payload as Record<string, unknown>)
+          ?.taskId;
 
         if (typeof taskId !== 'string') {
           continue;
         }
 
-        const set = notifiedByUser.get(notification.userId) ?? new Set<string>();
+        const set =
+          notifiedByUser.get(notification.userId) ?? new Set<string>();
         set.add(taskId);
         notifiedByUser.set(notification.userId, set);
       }

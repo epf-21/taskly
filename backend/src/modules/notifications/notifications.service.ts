@@ -1,14 +1,16 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import type { NotificationModel } from 'src/generated/prisma/models';
 import { NotificationType } from 'src/generated/prisma/enums';
+import { MAIL_EVENTS, NotificationCreatedEvent } from '../mail/mail.events';
 import { NotificationsRepository } from './notifications.repository';
 
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly notificationsRepository: NotificationsRepository) {}
+  constructor(
+    private readonly notificationsRepository: NotificationsRepository,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   findByUser(userId: string): Promise<NotificationModel[]> {
     return this.notificationsRepository.findByUser(userId);
@@ -33,16 +35,28 @@ export class NotificationsService {
     type: keyof typeof NotificationType,
     payload: Record<string, unknown>,
   ): Promise<NotificationModel> {
-    return this.notificationsRepository.create({
+    const notification = await this.notificationsRepository.create({
       userId,
       type: NotificationType[type],
       payload,
     });
+
+    this.eventEmitter.emit(
+      MAIL_EVENTS.notificationCreated,
+      new NotificationCreatedEvent(notification.id, userId, type, payload),
+    );
+
+    return notification;
   }
 
   createAssignedNotification(
     userId: string,
-    task: { id: string; title: string; boardId?: string | null; workspaceId?: string | null },
+    task: {
+      id: string;
+      title: string;
+      boardId?: string | null;
+      workspaceId?: string | null;
+    },
   ): Promise<NotificationModel> {
     return this.createForUser(userId, 'task_assigned', {
       taskId: task.id,
@@ -54,7 +68,13 @@ export class NotificationsService {
 
   createDueSoonNotification(
     userId: string,
-    task: { id: string; title: string; dueDate?: Date | string | null; boardId?: string | null; workspaceId?: string | null },
+    task: {
+      id: string;
+      title: string;
+      dueDate?: Date | string | null;
+      boardId?: string | null;
+      workspaceId?: string | null;
+    },
   ): Promise<NotificationModel> {
     return this.createForUser(userId, 'task_due_soon', {
       taskId: task.id,
@@ -67,7 +87,12 @@ export class NotificationsService {
 
   async createMentionNotifications(
     userIds: string[],
-    task: { id: string; title: string; boardId?: string | null; workspaceId?: string | null },
+    task: {
+      id: string;
+      title: string;
+      boardId?: string | null;
+      workspaceId?: string | null;
+    },
   ): Promise<NotificationModel[]> {
     const uniqueUserIds = [...new Set(userIds)];
 
