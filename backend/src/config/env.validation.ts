@@ -20,4 +20,11 @@ export const envValidationSchema = Joi.object({
 
   BCRYPT_SALT_ROUNDS: Joi.number().default(10),
   REDIS_URL: Joi.string().uri().optional(),
+
+  MAIL_HOST: Joi.string().hostname().optional(),
+  MAIL_PORT: Joi.number().port().optional(),
+  MAIL_USER: Joi.string().optional(),
+  MAIL_PASSWORD: Joi.string().optional(),
+  MAIL_FROM: Joi.string().email().optional(),
+  MAIL_SECURE: Joi.boolean().truthy('true').falsy('false').default(false),
 });
