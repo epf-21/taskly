@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AcceptInvitationDto } from 'src/modules/workspaces/invitations/dto/accept-invitation.dto';
 import { CreateInvitationDto } from 'src/modules/workspaces/invitations/dto/create-invitation.dto';
@@ -49,6 +50,10 @@ describe('InvitationsService', () => {
     findById: jest.fn(),
   };
 
+  const mockEventEmitter = {
+    emit: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -58,6 +63,7 @@ describe('InvitationsService', () => {
           provide: WorkspacesRepository,
           useValue: mockWorkspacesRepository,
         },
+        { provide: EventEmitter2, useValue: mockEventEmitter },
       ],
     }).compile();
 

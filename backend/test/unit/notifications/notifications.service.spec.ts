@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotificationType } from 'src/generated/prisma/enums';
 import { NotificationsRepository } from 'src/modules/notifications/notifications.repository';
@@ -25,11 +26,16 @@ describe('NotificationsService', () => {
     markAllRead: jest.fn(),
   };
 
+  const eventEmitter = {
+    emit: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         NotificationsService,
         { provide: NotificationsRepository, useValue: repository },
+        { provide: EventEmitter2, useValue: eventEmitter },
       ],
     }).compile();
 
