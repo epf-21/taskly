@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import { LoginSchema, defaultValues } from "./dto/login-dto";
 import { useLogin } from "./hook/use-login";
+import { InputMessageErrors } from "@/components/ui/inputMessageErros";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -54,68 +55,82 @@ export const LoginPage = () => {
           onSubmit={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            void form.handleSubmit();
+            form.handleSubmit();
           }}
         >
-          <form.Field name="email">
-            {(field) => (
-              <label className="block space-y-2">
-                <span className="text-sm font-medium text-slate-300">
-                  Email
-                </span>
-                <span className="relative block">
-                  <Mail
-                    className="absolute left-3 top-2.5 text-slate-500"
-                    size={17}
+          <form.Field
+            name="email"
+            children={(field) => (
+              <div className="flex flex-col gap-2 space-y-2">
+                <label
+                  htmlFor={field.name}
+                  className="text-slate-300 font-medium gap-2 flex items-center flex-wrap text-sm"
+                >
+                  <Mail className="w-6 h-6" />
+                  <span>Email</span>
+                </label>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  onChange={(event) => field.handleChange(event.target.value)}
+                  type="text"
+                  placeholder="Enter your email address"
+                  aria-required="true"
+                />
+                {!field.state.meta.isValid && (
+                  <InputMessageErrors
+                    message={field.state.meta.errors
+                      .map((e) => e?.message)
+                      .join(" ")}
                   />
-                  <Input
-                    required
-                    type="email"
-                    autoComplete="email"
-                    className="pl-10"
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                  />
-                </span>
-              </label>
+                )}
+              </div>
             )}
-          </form.Field>
-          <form.Field name="password">
-            {(field) => (
-              <label className="block space-y-2">
-                <span className="text-sm font-medium text-slate-300">
-                  Password
-                </span>
-                <span className="relative block">
-                  <LockKeyhole
-                    className="absolute left-3 top-2.5 text-slate-500"
-                    size={17}
+          />
+          <form.Field
+            name="password"
+            children={(field) => (
+              <div className="flex flex-col gap-2 space-y-2">
+                <label
+                  htmlFor={field.name}
+                  className="text-slate-300 font-medium gap-2 flex items-center flex-wrap text-sm"
+                >
+                  <LockKeyhole className="w-6 h-6" />
+                  <span>Password</span>
+                </label>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  onChange={(event) => field.handleChange(event.target.value)}
+                  type="password"
+                  placeholder="Enter your password"
+                  aria-required="true"
+                />
+                {!field.state.meta.isValid && (
+                  <InputMessageErrors
+                    message={field.state.meta.errors
+                      .map((e) => e?.message)
+                      .join("")}
                   />
-                  <Input
-                    required
-                    minLength={8}
-                    type="password"
-                    autoComplete="current-password"
-                    className="pl-10"
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                  />
-                </span>
-              </label>
+                )}
+              </div>
             )}
-          </form.Field>
+          />
           {errorMessage && (
             <p role="alert" className="text-sm text-red-300">
               {errorMessage}
             </p>
           )}
-          <form.Subscribe selector={(state) => [state.isSubmitting]}>
-            {([isSubmitting]) => (
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => (
+              <Button type="submit" className="w-full" disabled={!canSubmit}>
                 {isSubmitting ? "Please wait..." : "Sign in"}
               </Button>
             )}
-          </form.Subscribe>
+          />
         </form>
       </Card>
       <p className="mt-6 text-center text-sm text-slate-500">
