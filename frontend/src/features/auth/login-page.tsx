@@ -66,7 +66,7 @@ export const LoginPage = () => {
                   htmlFor={field.name}
                   className="text-slate-300 font-medium gap-2 flex items-center flex-wrap text-sm"
                 >
-                  <Mail className="w-6 h-6" />
+                  <Mail className="w-5 h-5" />
                   <span>Email</span>
                 </label>
                 <Input
@@ -96,7 +96,7 @@ export const LoginPage = () => {
                   htmlFor={field.name}
                   className="text-slate-300 font-medium gap-2 flex items-center flex-wrap text-sm"
                 >
-                  <LockKeyhole className="w-6 h-6" />
+                  <LockKeyhole className="w-5 h-5" />
                   <span>Password</span>
                 </label>
                 <Input
