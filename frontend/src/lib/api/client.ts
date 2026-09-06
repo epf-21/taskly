@@ -1,5 +1,5 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import { env } from "../../config/env";
+import { env } from "@/config/env";
 
 export const api = axios.create({
   baseURL: env.apiUrl,

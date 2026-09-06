@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, setTokens } from "../../../lib/api/client";
+import { api, setTokens } from "@/lib/api/client";
 import type { AuthResponse } from "../auth.types";
 import type { LoginDto } from "../dto/login-dto";
-import type { ApiError } from "../../../shared/interfaces/api-interface";
+import type { ApiError } from "@/shared/interfaces/api-interface";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();

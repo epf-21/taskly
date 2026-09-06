@@ -25,8 +25,17 @@ export function Dialog({ open, title, onClose, children }: DialogProps) {
         className="w-full max-w-lg rounded-2xl border border-taskly bg-taskly-surface p-6 shadow-2xl"
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 id="dialog-title" className="text-lg font-semibold text-white">{title}</h2>
-          <button type="button" onClick={onClose} className="text-slate-400 hover:text-white" aria-label="Close dialog">×</button>
+          <h2 id="dialog-title" className="text-lg font-semibold text-white">
+            {title}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-slate-400 hover:text-white"
+            aria-label="Close dialog"
+          >
+            ×
+          </button>
         </div>
         {children}
       </section>

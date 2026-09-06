@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { api, setTokens } from "../../../lib/api/client";
+import { api, setTokens } from "@/lib/api/client";
 import type { AuthResponse } from "../auth.types";
-import type { ApiError } from "../../../shared/interfaces/api-interface";
+import type { ApiError } from "@/shared/interfaces/api-interface";
 import type { RegisterDto } from "../dto/register-dto";
 
 export const useRegister = () =>

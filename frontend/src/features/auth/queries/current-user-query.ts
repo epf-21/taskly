@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { api, getAccessToken } from "../../../lib/api/client";
+import { api, getAccessToken } from "@/lib/api/client";
 import type { User } from "../auth.types";
 
 export const currentUserQuery = () =>

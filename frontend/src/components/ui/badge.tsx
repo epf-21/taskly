@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import { cn } from "../../utils/cn";
+import { cn } from "@/utils/cn";
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   tone?: "blue" | "green" | "amber" | "red" | "slate";

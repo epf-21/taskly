@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
-import { api, getRefreshToken, clearTokens } from "../../../lib/api/client";
+import { api, getRefreshToken, clearTokens } from "@/lib/api/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ApiError } from "../../../shared/interfaces/api-interface";
+import type { ApiError } from "@/shared/interfaces/api-interface";
 
 export const useLogout = () => {
   const navigate = useNavigate();
