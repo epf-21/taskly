@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 
-interface DialogProps {
+interface Props {
   open: boolean;
   title: string;
   onClose: () => void;
   children: ReactNode;
 }
 
-export function Dialog({ open, title, onClose, children }: DialogProps) {
+export const Dialog = ({ open, title, onClose, children }: Props) => {
   if (!open) return null;
 
   return (
@@ -41,4 +41,4 @@ export function Dialog({ open, title, onClose, children }: DialogProps) {
       </section>
     </div>
   );
-}
+};

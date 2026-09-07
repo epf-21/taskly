@@ -1,19 +1,19 @@
 import type { ReactNode } from "react";
 import { cn } from "@/utils/cn";
 
-interface EmptyStateProps {
+interface Props {
   title: string;
   description?: string;
   action?: ReactNode;
   className?: string;
 }
 
-export function EmptyState({
+export const EmptyState = ({
   title,
   description,
   action,
   className,
-}: EmptyStateProps) {
+}: Props) => {
   return (
     <div
       className={cn(
@@ -28,4 +28,4 @@ export function EmptyState({
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
-}
+};

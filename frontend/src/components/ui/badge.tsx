@@ -1,11 +1,11 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/utils/cn";
 
-interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+interface Props extends HTMLAttributes<HTMLSpanElement> {
   tone?: "blue" | "green" | "amber" | "red" | "slate";
 }
 
-export function Badge({ className, tone = "slate", ...props }: BadgeProps) {
+export const Badge = ({ className, tone = "slate", ...props }: Props) => {
   return (
     <span
       className={cn(
@@ -22,4 +22,4 @@ export function Badge({ className, tone = "slate", ...props }: BadgeProps) {
       {...props}
     />
   );
-}
+};

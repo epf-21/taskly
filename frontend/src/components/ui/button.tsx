@@ -3,15 +3,11 @@ import { cn } from "@/utils/cn";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
 }
 
-export function Button({
-  className,
-  variant = "primary",
-  ...props
-}: ButtonProps) {
+export const Button = ({ className, variant = "primary", ...props }: Props) => {
   return (
     <button
       className={cn(
@@ -30,4 +26,4 @@ export function Button({
       {...props}
     />
   );
-}
+};

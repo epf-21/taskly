@@ -1,5 +1,5 @@
 import { Toaster } from "sonner";
 
-export function ToastProvider() {
+export const ToastProvider = () => {
   return <Toaster theme="dark" position="bottom-right" richColors />;
-}
+};

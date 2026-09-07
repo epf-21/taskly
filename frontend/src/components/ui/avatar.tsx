@@ -1,12 +1,12 @@
 import { cn } from "@/utils/cn";
 
-interface AvatarProps {
+interface Props {
   name: string;
   src?: string | null;
   className?: string;
 }
 
-export function Avatar({ name, src, className }: AvatarProps) {
+export const Avatar = ({ name, src, className }: Props) => {
   return src ? (
     <img
       src={src}
@@ -24,4 +24,4 @@ export function Avatar({ name, src, className }: AvatarProps) {
       {name.charAt(0).toUpperCase()}
     </span>
   );
-}
+};
