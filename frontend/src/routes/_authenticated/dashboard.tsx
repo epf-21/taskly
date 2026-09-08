@@ -1,125 +1,278 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
-  ArrowUpRight,
   CheckCircle2,
   CircleDashed,
+  FolderKanban,
   ListTodo,
+  Plus,
+  RefreshCw,
 } from "lucide-react";
-import { useEffect } from "react";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import { Card } from "../../components/ui/card";
-import { useCurrentUser } from "../../features/auth/hook/use-current-user";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import { Button, EmptyState } from "@/components/ui";
+import {
+  DashboardSkeleton,
+  StatCard,
+  WorkspaceDialog,
+  WorkspaceDetails,
+  WorkspaceBoards,
+} from "@/features/workspaces/components";
+import { getApiErrorMessage } from "@/lib/api/errors";
+import { useCurrentUser } from "@/features/auth/hook/use-current-user";
+import {
+  useWorkspaces,
+  useCreateWorkspace,
+  useDeleteWorkspace,
+  useUpdateWorkspace,
+} from "@/features/workspaces/hooks/use-workspaces";
+import {
+  useBoards,
+  useArchiveBoard,
+  useCreateBoard,
+  useUpdateBoard,
+} from "@/features/boards/hooks/use-boards";
+import type { Workspace } from "@/features/workspaces/workspace.types";
+import type { Board } from "@/features/boards/board.types";
+import { BoardDialog } from "@/features/boards/components";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
 function DashboardPage() {
-  const navigate = useNavigate();
+  const { data: user } = useCurrentUser();
+  const {
+    data: workData,
+    isLoading: isLoadingWork,
+    isError: isErrorWork,
+    refetch: refetchWork,
+  } = useWorkspaces();
+  const workspaces = useMemo(() => workData ?? [], [workData]);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState("");
+  const [workspaceDialogOpen, setWorkspaceDialogOpen] = useState(false);
+  const [editingWorkspace, setEditingWorkspace] = useState<Workspace | null>(
+    null,
+  );
+  const [boardDialogOpen, setBoardDialogOpen] = useState(false);
+  const [editingBoard, setEditingBoard] = useState<Board | null>(null);
 
-  const { data: user, isLoading, isError } = useCurrentUser();
+  const activeWorkspaceId = workspaces.some(
+    (workspace) => workspace.id === selectedWorkspaceId,
+  )
+    ? selectedWorkspaceId
+    : (workspaces[0]?.id ?? "");
 
-  useEffect(() => {
-    if (isError) {
-      void navigate({ to: "/login", replace: true });
+  const selectedWorkspace = useMemo(
+    () => workspaces.find((workspace) => workspace.id === activeWorkspaceId),
+    [activeWorkspaceId, workspaces],
+  );
+  const {
+    data: boardData,
+    isLoading: isLoadingBoard,
+    isError: isErrorBoard,
+    refetch: refetchBoard,
+  } = useBoards(activeWorkspaceId);
+  const createWorkspace = useCreateWorkspace();
+  const updateWorkspace = useUpdateWorkspace();
+  const deleteWorkspace = useDeleteWorkspace();
+  const createBoard = useCreateBoard(activeWorkspaceId);
+  const updateBoard = useUpdateBoard(activeWorkspaceId);
+  const archiveBoard = useArchiveBoard(activeWorkspaceId);
+  const canManageWorkspace =
+    selectedWorkspace?.role === "owner" || selectedWorkspace?.role === "admin";
+  const canDeleteWorkspace = selectedWorkspace?.role === "owner";
+
+  const handleDeleteWorkspace = async () => {
+    if (!selectedWorkspace || !canDeleteWorkspace) return;
+    if (!window.confirm(`Delete "${selectedWorkspace.name}"?`)) return;
+
+    try {
+      await deleteWorkspace.mutateAsync(selectedWorkspace.id);
+      setSelectedWorkspaceId("");
+      toast.success("Workspace deleted");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Unable to delete workspace"));
     }
-  }, [isError, navigate]);
-  if (isLoading) {
+  };
+
+  const handleArchiveBoard = async (board: Board) => {
+    if (!window.confirm(`Archive "${board.name}"?`)) return;
+    try {
+      await archiveBoard.mutateAsync(board.id);
+      toast.success("Board archived");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Unable to archive board"));
+    }
+  };
+
+  if (isLoadingWork) {
+    return <DashboardSkeleton />;
+  }
+
+  if (isErrorWork) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        {" "}
-        <p className="text-taskly-muted">Loading...</p>{" "}
-      </div>
+      <EmptyState
+        title="We couldn't load your workspaces"
+        description="Check your connection and try again."
+        action={
+          <Button variant="secondary" onClick={() => refetchWork()}>
+            <RefreshCw size={16} /> Try again
+          </Button>
+        }
+      />
     );
   }
-  if (!user) {
-    return null;
-  }
+
   return (
     <div className="space-y-8">
-      <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+      <section className="flex flex-col justify-between gap-5 xl:flex-row xl:items-end">
         <div>
           <p className="mb-2 text-sm font-medium text-taskly-brand">
-            Thursday, September 3
+            Workspace overview
           </p>
           <h1 className="text-3xl font-bold tracking-tight text-white">
-            Good morning, welcome back.
+            Welcome back
+            {user?.fullName ? `, ${user.fullName.split(" ")[0]}` : ""}.
           </h1>
           <p className="mt-2 text-taskly-muted">
-            Here is what is happening across your projects.
+            Keep your projects moving from one focused workspace.
           </p>
         </div>
-        <Button>
-          <ListTodo size={17} /> Create task
-        </Button>
-      </section>
-      <section className="grid gap-4 md:grid-cols-3">
-        <Card className="p-5">
-          <div className="flex items-center justify-between text-taskly-muted">
-            <span className="text-sm">Active tasks</span>
-            <ListTodo size={18} className="text-taskly-brand" />
-          </div>
-          <p className="mt-4 text-3xl font-bold text-white">24</p>
-          <p className="mt-2 text-xs text-green-400">+12% from last week</p>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-sm">Completed</span>
-            <CheckCircle2 size={18} className="text-green-400" />
-          </div>
-          <p className="mt-4 text-3xl font-bold text-white">18</p>
-          <p className="mt-2 text-xs text-slate-500">This week</p>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-sm">Due soon</span>
-            <CircleDashed size={18} className="text-amber-400" />
-          </div>
-          <p className="mt-4 text-3xl font-bold text-white">5</p>
-          <p className="mt-2 text-xs text-amber-400">Next 24 hours</p>
-        </Card>
-      </section>
-      <Card className="overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-          <div>
-            <h2 className="font-semibold text-white">Recent workspaces</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Your most recently visited projects.
-            </p>
-          </div>
-          <button className="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300">
-            View all <ArrowUpRight size={15} />
-          </button>
-        </div>
-        <div className="divide-y divide-slate-800/80">
-          {["Product Design", "Marketing Launch", "Engineering"].map(
-            (workspace, index) => (
-              <div
-                key={workspace}
-                className="flex items-center justify-between px-5 py-4 transition hover:bg-slate-800/30"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/15 font-semibold text-blue-300">
-                    {workspace.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-200">
-                      {workspace}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      {index + 2} boards · Updated recently
-                    </p>
-                  </div>
-                </div>
-                <Badge tone={index === 0 ? "blue" : "slate"}>
-                  {index === 0 ? "Active" : "Member"}
-                </Badge>
-              </div>
-            ),
+        <div className="flex flex-wrap gap-3">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setEditingWorkspace(null);
+              setWorkspaceDialogOpen(true);
+            }}
+          >
+            <Plus size={17} /> New workspace
+          </Button>
+          {selectedWorkspace && canManageWorkspace && (
+            <Button
+              onClick={() => {
+                setEditingBoard(null);
+                setBoardDialogOpen(true);
+              }}
+            >
+              <FolderKanban size={17} /> New board
+            </Button>
           )}
         </div>
-      </Card>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <StatCard
+          label="Active tasks"
+          value="—"
+          detail="Coming with your boards"
+          icon={<ListTodo size={18} />}
+        />
+        <StatCard
+          label="Completed"
+          value="—"
+          detail="Track progress in each board"
+          icon={<CheckCircle2 size={18} />}
+          tone="success"
+        />
+        <StatCard
+          label="Due soon"
+          value="—"
+          detail="Notifications will appear here"
+          icon={<CircleDashed size={18} />}
+          tone="warning"
+        />
+      </section>
+
+      {workspaces.length === 0 ? (
+        <EmptyState
+          title="Create your first workspace"
+          description="Workspaces keep your boards, members and tasks organized."
+          action={
+            <Button onClick={() => setWorkspaceDialogOpen(true)}>
+              <Plus size={16} /> Create workspace
+            </Button>
+          }
+        />
+      ) : (
+        <>
+          <section className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)]">
+            <WorkspaceDetails
+              workspaces={workspaces}
+              selectedWorkspaceId={selectedWorkspaceId}
+              onSelected={setSelectedWorkspaceId}
+            />
+
+            <WorkspaceBoards
+              workspace={selectedWorkspace}
+              boards={boardData ?? []}
+              isLoading={isLoadingBoard}
+              isError={isErrorBoard}
+              canManageWorkspace={canManageWorkspace}
+              canDeleteWorkspace={canDeleteWorkspace}
+              refetch={refetchBoard}
+              onEditWorkspace={setEditingWorkspace}
+              onDeleteWorkspace={handleDeleteWorkspace}
+              onWorkspaceDialogOpen={setWorkspaceDialogOpen}
+              onEditBoard={setEditingBoard}
+              onBoardDialogOpen={setBoardDialogOpen}
+              onArchiveBoard={handleArchiveBoard}
+            />
+          </section>
+        </>
+      )}
+
+      <WorkspaceDialog
+        key={editingWorkspace?.id ?? "new-workspace"}
+        open={workspaceDialogOpen}
+        title={editingWorkspace ? "Edit workspace" : "Create workspace"}
+        initialValues={
+          editingWorkspace
+            ? {
+                name: editingWorkspace.name,
+                description: editingWorkspace.description ?? "",
+              }
+            : undefined
+        }
+        onClose={() => setWorkspaceDialogOpen(false)}
+        onSubmit={async (payload) => {
+          if (editingWorkspace) {
+            await updateWorkspace.mutateAsync({
+              workspaceId: editingWorkspace.id,
+              payload,
+            });
+          } else {
+            const workspace = await createWorkspace.mutateAsync(payload);
+            setSelectedWorkspaceId(workspace.id);
+          }
+        }}
+      />
+      {activeWorkspaceId && (
+        <BoardDialog
+          key={editingBoard?.id ?? "new-board"}
+          open={boardDialogOpen}
+          title={editingBoard ? "Edit board" : "Create board"}
+          initialValues={
+            editingBoard
+              ? {
+                  name: editingBoard.name,
+                  description: editingBoard.description ?? "",
+                }
+              : undefined
+          }
+          onClose={() => setBoardDialogOpen(false)}
+          onSubmit={async (payload) => {
+            if (editingBoard) {
+              await updateBoard.mutateAsync({
+                boardId: editingBoard.id,
+                payload,
+              });
+            } else {
+              await createBoard.mutateAsync(payload);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

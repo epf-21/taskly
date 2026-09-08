@@ -3,13 +3,10 @@ import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { toast } from "sonner";
 import { LockKeyhole, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button, Card, Input, InputMessageErrors } from "@/components/ui";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import { LoginSchema, defaultValues } from "./dto/login-dto";
 import { useLogin } from "./hook/use-login";
-import { InputMessageErrors } from "@/components/ui/inputMessageErros";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
