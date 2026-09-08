@@ -7,7 +7,7 @@ interface Props {
   children: ReactNode;
 }
 
-export const Dialog = ({ open, title, onClose, children }: Props) => {
+export const Modal = ({ open, title, onClose, children }: Props) => {
   if (!open) return null;
 
   return (

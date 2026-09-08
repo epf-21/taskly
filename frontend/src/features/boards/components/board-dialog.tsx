@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
-import { Button, Dialog, Input, Textarea } from "@/components/ui";
+import { Button, Modal, Input, Textarea } from "@/components/ui";
 import { getApiErrorMessage } from "@/lib/api/errors";
 
 interface Props {
@@ -36,7 +36,7 @@ export const BoardDialog = ({
   });
 
   return (
-    <Dialog open={open} title={title} onClose={onClose}>
+    <Modal open={open} title={title} onClose={onClose}>
       <form
         className="space-y-4"
         onSubmit={(event) => {
@@ -87,6 +87,6 @@ export const BoardDialog = ({
           </form.Subscribe>
         </div>
       </form>
-    </Dialog>
+    </Modal>
   );
 };
