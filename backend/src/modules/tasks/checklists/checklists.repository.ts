@@ -14,7 +14,7 @@ export class ChecklistsRepository {
     return this.prisma.task.findUnique({ where: { id: taskId } });
   }
 
-  findLastPosition(taskId: string): Promise<number | null> {
+  async findLastPosition(taskId: string): Promise<number | null> {
     return this.prisma.checklist
       .findFirst({
         where: { taskId },
@@ -36,7 +36,7 @@ export class ChecklistsRepository {
     return this.prisma.checklist.findUnique({ where: { id } });
   }
 
-  findLastItemPosition(checklistId: string): Promise<number | null> {
+  async findLastItemPosition(checklistId: string): Promise<number | null> {
     return this.prisma.checklistItem
       .findFirst({
         where: { checklistId },

@@ -56,10 +56,12 @@ export class ColumnsService {
       throw new NotFoundException('Columna no encontrada en este board');
     }
 
-    const [before, after] = await Promise.all([
-      dto.beforeId ? this.findNeighborInBoard(dto.beforeId, boardId) : null,
-      dto.afterId ? this.findNeighborInBoard(dto.afterId, boardId) : null,
-    ]);
+    const before = dto.beforeId
+      ? await this.findNeighborInBoard(dto.beforeId, boardId)
+      : null;
+    const after = dto.afterId
+      ? await this.findNeighborInBoard(dto.afterId, boardId)
+      : null;
 
     const position = calculatePosition(before?.position, after?.position);
 

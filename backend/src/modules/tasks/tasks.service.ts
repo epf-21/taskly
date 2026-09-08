@@ -155,14 +155,12 @@ export class TasksService {
       targetColumnId = targetColumn.id;
     }
 
-    const [before, after] = await Promise.all([
-      dto.beforeId
-        ? this.findNeighborInColumn(dto.beforeId, targetColumnId)
-        : null,
-      dto.afterId
-        ? this.findNeighborInColumn(dto.afterId, targetColumnId)
-        : null,
-    ]);
+    const before = dto.beforeId
+      ? await this.findNeighborInColumn(dto.beforeId, targetColumnId)
+      : null;
+    const after = dto.afterId
+      ? await this.findNeighborInColumn(dto.afterId, targetColumnId)
+      : null;
 
     const position = calculatePosition(before?.position, after?.position);
 
@@ -340,17 +338,15 @@ export class TasksService {
     const diffHours = (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
     if (diffHours <= 24 && diffHours >= 0) {
-      await Promise.all(
-        userIds.map((userId) =>
-          this.notificationsService.createDueSoonNotification(userId, {
-            id: task.id,
-            title: task.title,
-            dueDate,
-            boardId: task.boardId,
-            workspaceId,
-          }),
-        ),
-      );
+      for (const userId of userIds) {
+        await this.notificationsService.createDueSoonNotification(userId, {
+          id: task.id,
+          title: task.title,
+          dueDate,
+          boardId: task.boardId,
+          workspaceId,
+        });
+      }
     }
   }
 

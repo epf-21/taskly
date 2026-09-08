@@ -102,7 +102,7 @@ export class TasksRepository {
     return this.prisma.task.update({ where: { id }, data });
   }
 
-  findLastPosition(columnId: string): Promise<number | null> {
+  async findLastPosition(columnId: string): Promise<number | null> {
     return this.prisma.task
       .findFirst({
         where: { columnId, isArchived: false },
@@ -121,7 +121,7 @@ export class TasksRepository {
     });
   }
 
-  findAssigneeIds(taskId: string): Promise<string[]> {
+  async findAssigneeIds(taskId: string): Promise<string[]> {
     return this.prisma.taskAssignee
       .findMany({
         where: { taskId },

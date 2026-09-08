@@ -19,7 +19,7 @@ export class ColumnsRepository {
     return this.prisma.column.findUnique({ where: { id } });
   }
 
-  findLastPosition(boardId: string): Promise<number | null> {
+  async findLastPosition(boardId: string): Promise<number | null> {
     return this.prisma.column
       .findFirst({
         where: { boardId },

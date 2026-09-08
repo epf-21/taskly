@@ -96,16 +96,18 @@ export class NotificationsService {
   ): Promise<NotificationModel[]> {
     const uniqueUserIds = [...new Set(userIds)];
 
-    const results = await Promise.all(
-      uniqueUserIds.map((userId) =>
-        this.createForUser(userId, 'comment_mention', {
+    const results: NotificationModel[] = [];
+
+    for (const userId of uniqueUserIds) {
+      results.push(
+        await this.createForUser(userId, 'comment_mention', {
           taskId: task.id,
           taskTitle: task.title,
           boardId: task.boardId,
           workspaceId: task.workspaceId,
         }),
-      ),
-    );
+      );
+    }
 
     return results;
   }

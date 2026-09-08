@@ -129,18 +129,16 @@ export class BoardRolesGuard implements CanActivate {
       throw new NotFoundException('Board no encontrado');
     }
 
-    const [membership, override] = await Promise.all([
-      this.prisma.workspaceMember.findUnique({
-        where: {
-          workspaceId_userId: { workspaceId: board.workspaceId, userId },
-        },
-        select: { role: true },
-      }),
-      this.prisma.boardMember.findUnique({
-        where: { boardId_userId: { boardId: board.id, userId } },
-        select: { role: true },
-      }),
-    ]);
+    const membership = await this.prisma.workspaceMember.findUnique({
+      where: {
+        workspaceId_userId: { workspaceId: board.workspaceId, userId },
+      },
+      select: { role: true },
+    });
+    const override = await this.prisma.boardMember.findUnique({
+      where: { boardId_userId: { boardId: board.id, userId } },
+      select: { role: true },
+    });
 
     const inherited = membership && WORKSPACE_ROLE_TO_BOARD[membership.role];
     const effectiveRole = override?.role ?? inherited;
