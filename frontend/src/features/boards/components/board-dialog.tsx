@@ -1,12 +1,23 @@
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
-import { Button, Modal, Input, Textarea } from "@/components/ui";
+import {
+  Button,
+  Modal,
+  Input,
+  Textarea,
+  InputMessageErrors,
+} from "@/components/ui";
 import { getApiErrorMessage } from "@/lib/api/errors";
+import {
+  BoardCreateSchema,
+  defaultValues,
+  type BoardCreateDto,
+} from "../dto/board-dto";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSubmit: (payload: { name: string; description?: string }) => Promise<void>;
+  onSubmit: (payload: BoardCreateDto) => Promise<void>;
   initialValues?: { name: string; description: string };
   title: string;
 }
@@ -19,12 +30,13 @@ export const BoardDialog = ({
   title,
 }: Props) => {
   const form = useForm({
-    defaultValues: initialValues ?? { name: "", description: "" },
+    defaultValues: initialValues ?? defaultValues,
+    validators: { onSubmit: BoardCreateSchema },
     onSubmit: async ({ value }) => {
       try {
         await onSubmit({
           name: value.name.trim(),
-          description: value.description.trim() || undefined,
+          description: value.description?.trim() ?? "",
         });
         toast.success("Board saved");
         onClose();
@@ -41,47 +53,67 @@ export const BoardDialog = ({
         className="space-y-4"
         onSubmit={(event) => {
           event.preventDefault();
-          void form.handleSubmit();
+          form.handleSubmit();
         }}
       >
-        <form.Field name="name">
-          {(field) => (
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-taskly-foreground">
-                Name
-              </span>
+        <form.Field
+          name="name"
+          children={(field) => (
+            <div className="flex flex-col gap-2 space-y-2">
+              <label
+                htmlFor={field.name}
+                className="flex flex-wrap text-sm font-medium text-taskly-foreground"
+              >
+                <span>Name</span>
+              </label>
               <Input
-                required
-                minLength={2}
-                maxLength={255}
+                type="text"
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
               />
-            </label>
+              {!field.state.meta.isValid && (
+                <InputMessageErrors
+                  message={field.state.meta.errors
+                    .map((e) => e?.message)
+                    .join(" ")}
+                />
+              )}
+            </div>
           )}
-        </form.Field>
-        <form.Field name="description">
-          {(field) => (
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-taskly-foreground">
-                Description
-              </span>
+        />
+
+        <form.Field
+          name="description"
+          children={(field) => (
+            <div className="flex flex-col gap-2 space-y-2">
+              <label className="flex flez-wrap text-sm font-medium text-taskly-foreground">
+                <span>Description</span>
+              </label>
               <Textarea
                 maxLength={1000}
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
               />
-            </label>
+              {!field.state.meta.isValid && (
+                <InputMessageErrors
+                  message={field.state.meta.errors
+                    .map((e) => e?.message)
+                    .join(" ")}
+                />
+              )}
+            </div>
           )}
-        </form.Field>
+        />
         <div className="flex justify-end gap-3 pt-2">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <form.Subscribe selector={(state) => [state.isSubmitting]}>
-            {([isSubmitting]) => (
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save board"}
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+          >
+            {([canSubmit, isSubmitting]) => (
+              <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save workspace"}
               </Button>
             )}
           </form.Subscribe>
