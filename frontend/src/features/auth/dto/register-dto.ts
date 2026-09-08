@@ -3,12 +3,9 @@ import { z } from "zod";
 export const RegisterSchema = z.object({
   fullName: z
     .string()
-    .min(3, "Full name must be at least 3 characters long")
-    .max(20, "Full name must be at most 20 characters long")
-    .regex(
-      /^[a-zA-Z0-9_/-]+$/,
-      "Only letters, numbers, hyphens and underscores",
-    ),
+    .min(5, "Full name must be at least 5 characters long")
+    .max(100, "Full name must be at most 100 characters long"),
+
   email: z.email("Invalid email address").nonempty("Email is required"),
   password: z
     .string()
