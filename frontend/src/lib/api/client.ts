@@ -81,12 +81,7 @@ const refreshAccessToken = async (): Promise<string | null> => {
       refreshToken: string;
     }>(
       "/auth/refresh",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`,
-        },
-      },
+      { refreshToken },
     );
 
     setTokens(data.accessToken, data.refreshToken);

@@ -6,7 +6,7 @@ import {
   MoreHorizontal,
   Pencil,
 } from "lucide-react";
-import type { Board } from "@/features/workspaces/workspace.types";
+import type { Board } from "@/features/boards/board.types";
 
 export const BoardCard = ({
   board,
