@@ -1,4 +1,6 @@
 import type { Board, CreateBoard } from "@/features/boards/board.types";
+import type { BoardColumn } from "@/features/columns/columns.type";
+import type { Task, TaskPriority } from "@/features/tasks/tasks.type";
 import { api } from "@/lib/api/client";
 import type { ApiError } from "@/shared/interfaces/api-interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -71,12 +73,29 @@ export const useArchiveBoard = (workspaceId: string) => {
 };
 
 export const useBoardDetail = (boardId: string) => {
-  return useQuery<Board, ApiError>({
+  return useQuery<Board & { columns: BoardColumn[] }, ApiError>({
     queryKey: ["boards", boardId],
     queryFn: async () => {
-      const response = await api.get<Board>(`/boards/${boardId}`);
+      const response = await api.get<Board & { columns: BoardColumn[] }>(
+        `/boards/${boardId}`,
+      );
       return response.data;
     },
     enabled: Boolean(boardId),
   });
 };
+
+export const useBoardTasks = (
+  boardId: string,
+  filters: {
+    priority?: TaskPriority;
+    search?: string;
+  },
+) =>
+  useQuery<Task[], ApiError>({
+    queryKey: ["boards", boardId, "tasks", filters],
+    queryFn: async () =>
+      (await api.get<Task[]>(`/boards/${boardId}/tasks`, { params: filters }))
+        .data,
+    enabled: Boolean(boardId),
+  });

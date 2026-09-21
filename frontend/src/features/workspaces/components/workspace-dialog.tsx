@@ -67,7 +67,6 @@ export const WorkspaceDialog = ({
                 <span>Name</span>
               </label>
               <Input
-                type="text"
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
               />

@@ -1,3 +1,5 @@
+import type { BoardColumn } from "../columns/columns.type";
+
 export interface Board {
   id: string;
   workspaceId: string;
@@ -7,6 +9,7 @@ export interface Board {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  columns?: BoardColumn[];
 }
 
 export interface CreateBoard {
