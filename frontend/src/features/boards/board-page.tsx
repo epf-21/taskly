@@ -2,10 +2,18 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useBoardDetail } from "./hooks/use-boards";
-import { Badge, Button, EmptyState, Input, Skeleton } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  EmptyState,
+  Input,
+  ModalDelete,
+  Skeleton,
+} from "@/components/ui";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import { ArrowLeft, FolderKanban, Search } from "lucide-react";
 import type { TaskPriority } from "@/features/tasks/tasks.type";
+import type { BoardColumn } from "@/features/columns/columns.type";
 import { KanbanBoard } from "./components";
 import {
   useCreateColumn,
@@ -25,6 +33,8 @@ export const BoardPage = () => {
   const deleteColumn = useDeleteColumn(boardId);
   const createTask = useCreateTask(boardId);
   const moveTask = useMoveTask(boardId);
+  const [deleteColumnTarget, setDeleteColumnTarget] =
+    useState<BoardColumn | null>(null);
 
   if (isLoading) {
     return (
@@ -157,22 +167,25 @@ export const BoardPage = () => {
           });
           toast.success("Column updated");
         }}
-        onDeleteColumn={(column) => {
-          if (window.confirm(`Delete "${column.name}"?`)) {
-            deleteColumn.mutate(column.id, {
-              onSuccess: () => toast.success("Column deleted"),
-              onError: (deleteError) =>
-                toast.error(
-                  getApiErrorMessage(deleteError, "Unable to delete column"),
-                ),
-            });
-          }
-        }}
+        onDeleteColumn={(column) => setDeleteColumnTarget(column)}
         onCreateTask={async (columnId, payload) => {
           await createTask.mutateAsync({ columnId, payload });
           toast.success("Task created");
         }}
       />
+      {deleteColumnTarget && (
+        <ModalDelete
+          open
+          title="Delete column"
+          description={`Are you sure you want to delete "${deleteColumnTarget.name}"? Tasks in this column may no longer be available.`}
+          onClose={() => setDeleteColumnTarget(null)}
+          onAccept={async () => {
+            await deleteColumn.mutateAsync(deleteColumnTarget.id);
+            setDeleteColumnTarget(null);
+            toast.success("Column deleted");
+          }}
+        />
+      )}
     </div>
   );
 };

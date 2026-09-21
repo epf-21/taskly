@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Button, EmptyState } from "@/components/ui";
+import { Button, EmptyState, ModalDelete } from "@/components/ui";
 import {
   DashboardSkeleton,
   StatCard,
@@ -55,6 +55,11 @@ function DashboardPage() {
   );
   const [boardDialogOpen, setBoardDialogOpen] = useState(false);
   const [editingBoard, setEditingBoard] = useState<Board | null>(null);
+  const [deleteWorkspaceModalOpen, setDeleteWorkspaceModalOpen] =
+    useState(false);
+  const [archiveBoardTarget, setArchiveBoardTarget] = useState<Board | null>(
+    null,
+  );
 
   const activeWorkspaceId = workspaces.some(
     (workspace) => workspace.id === selectedWorkspaceId,
@@ -84,11 +89,11 @@ function DashboardPage() {
 
   const handleDeleteWorkspace = async () => {
     if (!selectedWorkspace || !canDeleteWorkspace) return;
-    if (!window.confirm(`Delete "${selectedWorkspace.name}"?`)) return;
 
     try {
       await deleteWorkspace.mutateAsync(selectedWorkspace.id);
       setSelectedWorkspaceId("");
+      setDeleteWorkspaceModalOpen(false);
       toast.success("Workspace deleted");
     } catch (error) {
       toast.error(getApiErrorMessage(error, "Unable to delete workspace"));
@@ -96,9 +101,9 @@ function DashboardPage() {
   };
 
   const handleArchiveBoard = async (board: Board) => {
-    if (!window.confirm(`Archive "${board.name}"?`)) return;
     try {
       await archiveBoard.mutateAsync(board.id);
+      setArchiveBoardTarget(null);
       toast.success("Board archived");
     } catch (error) {
       toast.error(getApiErrorMessage(error, "Unable to archive board"));
@@ -212,11 +217,11 @@ function DashboardPage() {
               canDeleteWorkspace={canDeleteWorkspace}
               refetch={refetchBoard}
               onEditWorkspace={setEditingWorkspace}
-              onDeleteWorkspace={handleDeleteWorkspace}
+              onDeleteWorkspace={() => setDeleteWorkspaceModalOpen(true)}
               onWorkspaceDialogOpen={setWorkspaceDialogOpen}
               onEditBoard={setEditingBoard}
               onBoardDialogOpen={setBoardDialogOpen}
-              onArchiveBoard={handleArchiveBoard}
+              onArchiveBoard={(board) => setArchiveBoardTarget(board)}
             />
           </section>
         </>
@@ -271,6 +276,25 @@ function DashboardPage() {
               await createBoard.mutateAsync(payload);
             }
           }}
+        />
+      )}
+      {selectedWorkspace && (
+        <ModalDelete
+          open={deleteWorkspaceModalOpen}
+          title="Delete workspace"
+          description={`Are you sure you want to delete "${selectedWorkspace.name}"? This action cannot be undone.`}
+          onClose={() => setDeleteWorkspaceModalOpen(false)}
+          onAccept={handleDeleteWorkspace}
+        />
+      )}
+      {archiveBoardTarget && (
+        <ModalDelete
+          open
+          title="Archive board"
+          description={`Are you sure you want to archive "${archiveBoardTarget.name}"? Its tasks will no longer appear in active boards.`}
+          acceptLabel="Archive"
+          onClose={() => setArchiveBoardTarget(null)}
+          onAccept={() => handleArchiveBoard(archiveBoardTarget)}
         />
       )}
     </div>
