@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { useLogin } from "./hook/use-login";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+  const { redirect } = useSearch({ from: "/_public/login" });
   const login = useLogin();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -22,7 +23,11 @@ export const LoginPage = () => {
       try {
         await login.mutateAsync(value);
         toast.success("Welcome back");
-        await navigate({ to: "/dashboard" });
+        if (redirect === "/invitations/accept") {
+          await navigate({ to: "/invitations/accept" });
+        } else {
+          await navigate({ to: "/dashboard" });
+        }
       } catch (error) {
         setErrorMessage(
           getApiErrorMessage(error, "Invalid email or password."),

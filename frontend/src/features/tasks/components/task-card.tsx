@@ -9,7 +9,13 @@ const priorityTone: Record<TaskPriority, "blue" | "green" | "amber" | "red"> = {
   high: "amber",
   urgent: "red",
 };
-export const TaskCard = ({ task }: { task: Task }) => {
+export const TaskCard = ({
+  task,
+  onOpen,
+}: {
+  task: Task;
+  onOpen?: () => void;
+}) => {
   const {
     attributes,
     listeners,
@@ -24,6 +30,9 @@ export const TaskCard = ({ task }: { task: Task }) => {
       style={{ transform: CSS.Transform.toString(transform), transition }}
       {...attributes}
       {...listeners}
+      onDoubleClick={onOpen}
+      role="button"
+      tabIndex={0}
       className={`rounded-2xl border border-taskly bg-taskly-surface p-3 cursor-grab active:cursor-grabbing ${isDragging ? "opacity-50" : ""}`}
     >
       <div className="flex items-start justify-between gap-2">

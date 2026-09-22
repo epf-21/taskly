@@ -7,6 +7,7 @@ import { Button, Card, Input, InputMessageErrors } from "@/components/ui";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import { defaultValues, RegisterSchema } from "./dto/register-dto";
 import { useRegister } from "./hook/use-register";
+import { pendingInvitationTokenKey } from "@/features/workspaces/hooks/use-accept-invitation";
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -22,7 +23,14 @@ export const RegisterPage = () => {
       try {
         await register.mutateAsync(value);
         toast.success("Account created");
-        await navigate({ to: "/dashboard" });
+        const pendingInvitation = sessionStorage.getItem(
+          pendingInvitationTokenKey,
+        );
+        if (pendingInvitation) {
+          await navigate({ to: "/invitations/accept" });
+        } else {
+          await navigate({ to: "/dashboard" });
+        }
       } catch (error) {
         setErrorMessage(
           getApiErrorMessage(

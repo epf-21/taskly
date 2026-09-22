@@ -7,6 +7,7 @@ import {
 } from "@dnd-kit/sortable";
 import { Button, EmptyState } from "@/components/ui";
 import { TaskCard } from "@/features/tasks/components";
+import type { Task } from "@/features/tasks/tasks.type";
 
 export const KanbanColumn = ({
   column,
@@ -15,6 +16,7 @@ export const KanbanColumn = ({
   onEdit,
   onDelete,
   onAddTask,
+  onTaskOpen,
 }: {
   column: BoardColumn;
   canManage: boolean;
@@ -22,6 +24,7 @@ export const KanbanColumn = ({
   onEdit: () => void;
   onDelete: () => void;
   onAddTask: () => void;
+  onTaskOpen: (task: Task) => void;
 }) => {
   const { setNodeRef } = useDroppable({ id: column.id });
   return (
@@ -73,7 +76,7 @@ export const KanbanColumn = ({
       >
         <div className="flex flex-1 flex-col gap-2 p-3">
           {column.tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
+            <TaskCard key={task.id} task={task} onOpen={() => onTaskOpen(task)} />
           ))}
           {column.tasks.length === 0 && (
             <EmptyState

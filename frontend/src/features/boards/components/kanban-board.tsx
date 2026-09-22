@@ -9,7 +9,7 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import type { BoardColumn } from "@/features/columns/columns.type";
-import type { CreateTask } from "@/features/tasks/tasks.type";
+import type { CreateTask, Task } from "@/features/tasks/tasks.type";
 import { TaskModal } from "@/features/tasks/components";
 import { ColumnModal } from "@/features/columns/components";
 import { KanbanColumn } from "@/features/columns/components/kanban-column";
@@ -23,6 +23,7 @@ export const KanbanBoard = ({
   onEditColumn,
   onDeleteColumn,
   onCreateTask,
+  onTaskOpen,
 }: {
   columns: BoardColumn[];
   canManage: boolean;
@@ -37,6 +38,7 @@ export const KanbanBoard = ({
   onEditColumn: (column: BoardColumn) => Promise<void>;
   onDeleteColumn: (column: BoardColumn) => void;
   onCreateTask: (columnId: string, payload: CreateTask) => Promise<void>;
+  onTaskOpen: (task: Task) => void;
 }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -84,6 +86,7 @@ export const KanbanBoard = ({
               onEdit={() => setColumnDialog(column)}
               onDelete={() => onDeleteColumn(column)}
               onAddTask={() => setTaskColumnId(column.id)}
+              onTaskOpen={onTaskOpen}
             />
           ))}
           {canManage && (

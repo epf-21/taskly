@@ -1,4 +1,4 @@
-import { Link, useParams } from "@tanstack/react-router";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useBoardDetail } from "./hooks/use-boards";
@@ -21,9 +21,11 @@ import {
   useUpdateColumn,
 } from "../columns/hooks/use-columns";
 import { useCreateTask, useMoveTask } from "../tasks/hooks/use-task";
+import { useWorkspaces } from "@/features/workspaces/hooks/use-workspaces";
 
 export const BoardPage = () => {
   const { boardId } = useParams({ from: "/_authenticated/boards/$boardId" });
+  const navigate = useNavigate();
 
   const { data, isLoading, isError, error, refetch } = useBoardDetail(boardId);
   const [search, setSearch] = useState("");
@@ -33,6 +35,7 @@ export const BoardPage = () => {
   const deleteColumn = useDeleteColumn(boardId);
   const createTask = useCreateTask(boardId);
   const moveTask = useMoveTask(boardId);
+  const workspacesQuery = useWorkspaces();
   const [deleteColumnTarget, setDeleteColumnTarget] =
     useState<BoardColumn | null>(null);
 
@@ -75,6 +78,12 @@ export const BoardPage = () => {
   }
 
   const board = data;
+  const workspace = workspacesQuery.data?.find(
+    (item) => item.id === board.workspaceId,
+  );
+  const canManage = workspace?.role === "owner" || workspace?.role === "admin";
+  const canEdit =
+    canManage || workspace?.role === "member";
 
   return (
     <div className="space-y-6">
@@ -143,8 +152,8 @@ export const BoardPage = () => {
               (priority === "all" || task.priority === priority),
           ),
         }))}
-        canManage
-        canEdit
+        canManage={Boolean(canManage)}
+        canEdit={Boolean(canEdit)}
         onMoveTask={(taskId, columnId, beforeId, afterId) =>
           moveTask.mutate(
             { taskId, columnId, beforeId, afterId },
@@ -171,6 +180,9 @@ export const BoardPage = () => {
         onCreateTask={async (columnId, payload) => {
           await createTask.mutateAsync({ columnId, payload });
           toast.success("Task created");
+        }}
+        onTaskOpen={(task) => {
+          void navigate({ to: "/tasks/$taskId", params: { taskId: task.id } });
         }}
       />
       {deleteColumnTarget && (

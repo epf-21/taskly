@@ -3,6 +3,7 @@ import {
   Link,
   Outlet,
   redirect,
+  useRouterState,
 } from "@tanstack/react-router";
 import {
   Bell,
@@ -17,6 +18,7 @@ import { queryClient } from "../lib/query-client";
 import { currentUserQuery } from "../features/auth/queries/current-user-query";
 import { useCurrentUser } from "../features/auth/hook/use-current-user";
 import { useLogout } from "../features/auth/hook/use-logout";
+import { useNotifications } from "../features/notifications/use-notifications";
 import { getAccessToken } from "../lib/api/client";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -34,9 +36,29 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function RouteComponent() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
   const { data: user } = useCurrentUser();
   const { mutate: logout, isPending } = useLogout();
+  const { data: notifications } = useNotifications();
+  const unreadNotifications =
+    notifications?.filter((notification) => !notification.readAt).length ?? 0;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isActive = (path: string) => pathname === path;
+  const navItemClass = (active: boolean) =>
+    active
+      ? "flex items-center gap-3 rounded-lg bg-taskly-brand-soft px-3 py-2.5 text-sm font-medium text-taskly-brand"
+      : "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-taskly-muted transition hover:bg-taskly-surface-muted hover:text-taskly-foreground";
+  const mobileNavItemClass = (active: boolean) =>
+    active
+      ? "flex items-center gap-2 rounded-lg bg-taskly-brand-soft px-3 py-2 text-sm text-taskly-brand"
+      : "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-taskly-muted hover:bg-taskly-surface-muted";
+  const currentSection = isActive("/workspaces")
+    ? "Workspaces"
+    : isActive("/notifications")
+      ? "Notifications"
+      : "Overview";
 
   return (
     <div className="min-h-screen bg-taskly-background text-taskly-foreground">
@@ -51,21 +73,26 @@ function RouteComponent() {
           <nav className="space-y-1">
             <Link
               to="/dashboard"
-              className="flex items-center gap-3 rounded-lg bg-taskly-brand-soft px-3 py-2.5 text-sm font-medium text-taskly-brand"
+              className={navItemClass(isActive("/dashboard"))}
             >
               <LayoutDashboard size={17} /> Overview
             </Link>
             <Link
-              to="/dashboard"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-taskly-muted transition hover:bg-taskly-surface-muted hover:text-taskly-foreground"
+              to="/workspaces"
+              className={navItemClass(isActive("/workspaces"))}
             >
               <Shapes size={17} /> Workspaces
             </Link>
             <Link
-              to="/dashboard"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-taskly-muted transition hover:bg-taskly-surface-muted hover:text-taskly-foreground"
+              to="/notifications"
+              className={navItemClass(isActive("/notifications"))}
             >
               <Bell size={17} /> Notifications
+              {unreadNotifications > 0 && (
+                <span className="ml-auto rounded-full bg-taskly-brand px-2 py-0.5 text-[10px] text-white">
+                  {unreadNotifications}
+                </span>
+              )}
             </Link>
           </nav>
           <button className="mt-10 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-taskly-muted transition hover:bg-taskly-surface-muted hover:text-taskly-foreground">
@@ -84,7 +111,7 @@ function RouteComponent() {
                 <Menu size={19} />
               </button>
               <div className="text-sm text-taskly-muted">
-                Workspace / Overview
+                Workspace / {currentSection}
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -109,23 +136,28 @@ function RouteComponent() {
                 <Link
                   to="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-lg bg-taskly-brand-soft px-3 py-2 text-sm text-taskly-brand"
+                  className={mobileNavItemClass(isActive("/dashboard"))}
                 >
                   <LayoutDashboard size={16} /> Overview
                 </Link>
                 <Link
-                  to="/dashboard"
+                  to="/workspaces"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-taskly-muted hover:bg-taskly-surface-muted"
+                  className={mobileNavItemClass(isActive("/workspaces"))}
                 >
                   <Shapes size={16} /> Workspaces
                 </Link>
                 <Link
-                  to="/dashboard"
+                  to="/notifications"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-taskly-muted hover:bg-taskly-surface-muted"
+                  className={mobileNavItemClass(isActive("/notifications"))}
                 >
                   <Bell size={16} /> Notifications
+                  {unreadNotifications > 0 && (
+                    <span className="ml-auto rounded-full bg-taskly-brand px-2 py-0.5 text-[10px] text-white">
+                      {unreadNotifications}
+                    </span>
+                  )}
                 </Link>
               </div>
             </nav>
