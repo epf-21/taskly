@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import type { TaskPriority } from 'src/generated/prisma/enums';
 import type {
+  AttachmentModel,
+  ChecklistItemModel,
+  ChecklistModel,
+  CommentModel,
   LabelModel,
   TaskAssigneeModel,
   TaskLabelModel,
@@ -12,6 +16,9 @@ import type {
 export interface TaskDetail extends TaskModel {
   assignees: (TaskAssigneeModel & { user: UserModel })[];
   labels: (TaskLabelModel & { label: LabelModel })[];
+  checklists: (ChecklistModel & { items: ChecklistItemModel[] })[];
+  comments: (CommentModel & { user: UserModel | null })[];
+  attachments: AttachmentModel[];
 }
 
 export interface TaskFilters {
@@ -49,6 +56,17 @@ export class TasksRepository {
       include: {
         assignees: { include: { user: true }, orderBy: { assignedAt: 'asc' } },
         labels: { include: { label: true } },
+        checklists: {
+          orderBy: { position: 'asc' },
+          include: {
+            items: { orderBy: { position: 'asc' } },
+          },
+        },
+        comments: {
+          orderBy: { createdAt: 'asc' },
+          include: { user: true },
+        },
+        attachments: { orderBy: { createdAt: 'desc' } },
       },
     });
   }

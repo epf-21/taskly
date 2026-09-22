@@ -7,6 +7,7 @@ import {
 import { PrismaService } from 'src/database/prisma.service';
 import { ActivityAction } from 'src/generated/prisma/enums';
 import type { TaskModel } from 'src/generated/prisma/models';
+import type { AttachmentModel } from 'src/generated/prisma/models';
 import { calculatePosition } from 'src/shared/utils/fractional-index.util';
 import { ActivityService } from '../activity/activity.service';
 import { ColumnsRepository } from '../columns/columns.repository';
@@ -17,7 +18,16 @@ import { CreateTaskLabelDto } from './dto/create-task-label.dto';
 import { FilterTasksDto } from './dto/filter-tasks.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { TasksRepository, TaskDetail } from './tasks.repository';
+import {
+  TasksRepository,
+  TaskDetail,
+} from './tasks.repository';
+
+type TaskDetailResponse = Omit<TaskDetail, 'attachments'> & {
+  attachments: (Omit<AttachmentModel, 'fileSizeBytes'> & {
+    fileSizeBytes: number | null;
+  })[];
+};
 
 @Injectable()
 export class TasksService {
@@ -73,14 +83,24 @@ export class TasksService {
     return this.tasksRepository.findManyByBoard(boardId, filters);
   }
 
-  async findDetail(taskId: string): Promise<TaskDetail> {
+  async findDetail(taskId: string): Promise<TaskDetailResponse> {
     const task = await this.tasksRepository.findDetailById(taskId);
 
     if (!task) {
       throw new NotFoundException('Tarea no encontrada');
     }
 
-    return task;
+    return {
+      ...task,
+      attachments: task.attachments.map((attachment) => ({
+        ...attachment,
+        fileSizeBytes:
+          attachment.fileSizeBytes === null ||
+          attachment.fileSizeBytes === undefined
+            ? null
+            : Number(attachment.fileSizeBytes),
+      })),
+    };
   }
 
   async update(taskId: string, dto: UpdateTaskDto): Promise<TaskModel> {
