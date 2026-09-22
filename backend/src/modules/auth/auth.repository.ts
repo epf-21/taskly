@@ -24,11 +24,13 @@ export class AuthRepository {
     });
   }
 
-  async revokeById(id: string): Promise<void> {
-    await this.prisma.refreshToken.updateMany({
+  async revokeById(id: string): Promise<number> {
+    const result = await this.prisma.refreshToken.updateMany({
       where: { id, revokedAt: null },
       data: { revokedAt: new Date() },
     });
+
+    return result.count;
   }
 
   async revokeAllByUserId(userId: string): Promise<void> {

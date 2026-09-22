@@ -78,7 +78,11 @@ export class AuthService {
 
     const user = await this.userService.findOne(userId);
 
-    await this.authRepository.revokeById(storedToken.id);
+    const revokedCount = await this.authRepository.revokeById(storedToken.id);
+
+    if (revokedCount !== 1) {
+      throw new UnauthorizedException('Token inválido o ya utilizado');
+    }
 
     return this.generateTokens(user, {
       userAgent: storedToken.userAgent ?? undefined,
@@ -100,7 +104,11 @@ export class AuthService {
     user: UserModel,
     meta: RequestMeta,
   ): Promise<AuthTokens> {
-    const payload: JwtPayload = { sub: user.id, email: user.email };
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      jti: crypto.randomUUID(),
+    };
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.config.getOrThrow<string>('jwt.accessSecret'),

@@ -97,6 +97,7 @@ describe('AuthService', () => {
     });
 
     jest.clearAllMocks();
+    mockAuthRepository.revokeById.mockResolvedValue(1);
   });
 
   it('should be defined', () => {
@@ -276,6 +277,15 @@ describe('AuthService', () => {
       await expect(
         service.refresh('user-1', 'raw-refresh-token'),
       ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('rechaza una rotación concurrente si el token ya fue revocado', async () => {
+      mockAuthRepository.revokeById.mockResolvedValue(0);
+
+      await expect(
+        service.refresh('user-1', 'raw-refresh-token'),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(mockJwtService.signAsync).not.toHaveBeenCalled();
     });
   });
 
