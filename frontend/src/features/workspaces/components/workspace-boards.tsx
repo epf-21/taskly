@@ -12,9 +12,8 @@ interface Props {
   canManageWorkspace: boolean;
   canDeleteWorkspace: boolean;
   refetch: () => void;
-  onEditWorkspace: (workspace: Workspace) => void;
+  onEditWorkspace: () => void;
   onDeleteWorkspace: () => void;
-  onWorkspaceDialogOpen: (value: boolean) => void;
   onEditBoard: (board: Board) => void;
   onBoardDialogOpen: (value: boolean) => void;
   onArchiveBoard: (board: Board) => void;
@@ -30,7 +29,6 @@ export const WorkspaceBoards = ({
   refetch,
   onEditWorkspace,
   onDeleteWorkspace,
-  onWorkspaceDialogOpen,
   onEditBoard,
   onBoardDialogOpen,
   onArchiveBoard,
@@ -46,13 +44,7 @@ export const WorkspaceBoards = ({
         </div>
         <div className="flex items-center gap-2">
           {workspace && canManageWorkspace && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                onEditWorkspace(workspace);
-                onWorkspaceDialogOpen(true);
-              }}
-            >
+            <Button variant="ghost" onClick={onEditWorkspace}>
               <Pencil size={15} /> Edit
             </Button>
           )}
