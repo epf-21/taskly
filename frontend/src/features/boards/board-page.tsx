@@ -132,7 +132,7 @@ export const BoardPage = () => {
           onChange={(event) =>
             setPriority(event.target.value as TaskPriority | "all")
           }
-          className="rounded-lg border border-taskly bg-taskly-surface-muted p-2.5 text-sm text-taskly-foreground"
+          className="min-h-11 rounded-xl border border-taskly bg-taskly-surface-muted px-3 py-2.5 text-sm text-taskly-foreground shadow-inner shadow-slate-950/20"
         >
           <option value="all">All priorities</option>
           <option value="low">Low</option>

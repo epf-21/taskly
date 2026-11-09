@@ -8,7 +8,7 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-taskly bg-taskly-surface shadow-xl shadow-slate-950/20",
+        "rounded-2xl border border-taskly bg-taskly-surface",
         className,
       )}
       {...props}

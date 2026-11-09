@@ -8,7 +8,7 @@ export const Textarea = ({
   return (
     <textarea
       className={cn(
-        "min-h-24 w-full resize-y rounded-lg border border-taskly bg-taskly-background px-3 py-2 text-sm text-taskly-foreground outline-none transition placeholder:text-taskly-muted focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20",
+        "min-h-24 w-full resize-y rounded-xl border border-taskly bg-taskly-surface-muted px-3.5 py-2.5 text-sm text-taskly-foreground outline-none transition placeholder:text-taskly-muted focus:border-brand-500 focus:bg-taskly-surface",
         className,
       )}
       {...props}

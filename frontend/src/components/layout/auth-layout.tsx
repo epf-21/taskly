@@ -6,8 +6,8 @@ export const AuthLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-taskly-background text-taskly-foreground">
-      <div className="flex min-h-screen">
+    <div className="min-h-dvh bg-taskly-background text-taskly-foreground">
+      <div className="flex min-h-dvh">
         <Sidebar />
         <main className="min-w-0 flex-1">
           <Header onClick={() => setMobileMenuOpen((open) => !open)} />

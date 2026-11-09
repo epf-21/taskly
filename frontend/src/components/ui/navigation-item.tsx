@@ -22,17 +22,17 @@ export const NavigationItem = ({
       onClick={onClick}
       activeProps={{
         className:
-          "flex items-center gap-3 rounded-lg bg-taskly-brand-soft px-3 py-2.5 text-sm font-medium text-taskly-brand",
+          "flex min-h-11 items-center gap-3 rounded-xl border border-taskly bg-taskly-brand-soft px-3 py-2.5 text-sm font-semibold text-white",
       }}
       inactiveProps={{
         className:
-          "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-taskly-muted transition hover:bg-taskly-surface-muted hover:text-taskly-foreground",
+          "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-taskly-muted transition hover:bg-taskly-surface-muted hover:text-taskly-foreground",
       }}
     >
       {icon}
       <span>{children}</span>
       {badge !== undefined && badge > 0 && (
-        <span className="ml-auto rounded-full bg-taskly-brand px-2 py-0.5 text-[10px] text-white">
+        <span className="ml-auto rounded-full bg-taskly-brand px-2 py-0.5 text-[10px] font-semibold text-white">
           {badge}
         </span>
       )}

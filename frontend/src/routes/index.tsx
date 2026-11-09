@@ -1,5 +1,17 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { ArrowRight, Check, KanbanSquare, Play, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  BadgeCheck,
+  Check,
+  Clock3,
+  Globe2,
+  LockKeyhole,
+  Play,
+  Sparkles,
+  Users,
+  Zap,
+} from "lucide-react";
 import { queryClient } from "../lib/query-client";
 import { currentUserQuery } from "../features/auth/queries/current-user-query";
 import { getAccessToken } from "../lib/api/client";
@@ -24,11 +36,85 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
+  const metrics = [
+    { label: "Events per minute", value: "128,420", delta: "+12.4%" },
+    { label: "Active teams", value: "2,916", delta: "+8.1%" },
+    { label: "SLA compliance", value: "99.97%", delta: "+0.3%" },
+  ];
+
+  const features = [
+    {
+      icon: Zap,
+      title: "Real-time signal",
+      text: "Track spikes, drop-offs, and campaign impact as they happen with live boards and instant updates.",
+    },
+    {
+      icon: Users,
+      title: "Aligned teams",
+      text: "Product, growth, and ops share one source of truth with role-based access and clear ownership.",
+    },
+    {
+      icon: LockKeyhole,
+      title: "Enterprise-ready security",
+      text: "Permissions, audit trails, and controlled collaboration built for teams handling critical workflows.",
+    },
+    {
+      icon: Clock3,
+      title: "Operational clarity",
+      text: "Reduce status meetings with transparent progress, dependencies, and alerts in one dashboard.",
+    },
+  ];
+
+  const pricing = [
+    {
+      tier: "Starter",
+      price: "$0",
+      period: "/month",
+      summary: "For small teams validating workflow.",
+      cta: "Start free",
+      highlight: false,
+      items: [
+        "Up to 5 members",
+        "3 active workspaces",
+        "Core analytics overview",
+        "Email notifications",
+      ],
+    },
+    {
+      tier: "Growth",
+      price: "$39",
+      period: "/month",
+      summary: "For scaling teams that need visibility.",
+      cta: "Choose Growth",
+      highlight: true,
+      items: [
+        "Unlimited members",
+        "Advanced analytics panels",
+        "Priority automations",
+        "Role-based controls",
+      ],
+    },
+    {
+      tier: "Enterprise",
+      price: "Custom",
+      period: "",
+      summary: "For multi-team organizations.",
+      cta: "Contact sales",
+      highlight: false,
+      items: [
+        "SSO + security policies",
+        "SLA and dedicated support",
+        "Custom data retention",
+        "Executive reporting",
+      ],
+    },
+  ];
+
   return (
-    <main className="min-h-screen overflow-hidden bg-taskly-background text-taskly-foreground">
+    <main className="min-h-dvh overflow-hidden bg-taskly-background text-taskly-foreground">
       <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-6 sm:px-8">
         <Link to="/" className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-taskly-brand text-lg font-bold shadow-lg shadow-blue-950/60">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-800/50 bg-taskly-brand text-lg font-bold shadow-lg shadow-blue-950/60">
             T
           </span>
           <span className="text-xl font-bold tracking-tight text-white">
@@ -38,142 +124,221 @@ function LandingPage() {
         <div className="flex items-center gap-3">
           <Link
             to="/login"
-            className="rounded-lg px-4 py-2 text-sm font-medium text-slate-300 transition hover:text-white"
+            className="rounded-xl px-4 py-2.5 text-sm font-medium text-taskly-muted transition hover:bg-taskly-surface-muted hover:text-taskly-foreground"
           >
             Sign in
           </Link>
           <Link
             to="/register"
-            className="rounded-lg bg-taskly-brand px-4 py-2 text-sm font-semibold text-white shadow-lg 
-            shadow-blue-950/50 transition hover:bg-brand-500"
+            className="rounded-xl bg-taskly-brand px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/50 transition hover:bg-brand-500"
           >
             Get started
           </Link>
         </div>
       </nav>
 
-      <section className="relative mx-auto max-w-7xl px-5 pb-24 pt-16 sm:px-8 sm:pt-24 lg:pb-32 lg:pt-28">
-        <div className="pointer-events-none absolute -right-48 -top-40 h-152 w-152 rounded-full bg-blue-900/20 blur-3xl" />
-        <div className="pointer-events-none absolute -left-48 top-72 h-96 w-96 rounded-full bg-cyan-950/20 blur-3xl" />
-        <div className="relative mx-auto max-w-4xl text-center">
-          <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-7xl">
-            Turn scattered work into
-            <span className="block bg-linear-to-r from-blue-300 via-blue-500 to-cyan-300 bg-clip-text text-transparent pb-4">
-              meaningful progress.
-            </span>
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl">
-            Taskly brings your projects, tasks and team into one focused
-            workspace built for momentum.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              to="/register"
-              className="group inline-flex items-center justify-center gap-2 rounded-xl bg-taskly-brand px-6 py-3.5 font-semibold text-white shadow-xl shadow-blue-950/60 transition hover:bg-[#1d4ed8]"
-            >
-              Start for free
-              <ArrowRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1"
-              />
-            </Link>
-            <Link
-              to="/login"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/50 px-6 py-3.5 font-semibold text-slate-200 transition hover:border-blue-800 hover:bg-blue-950/40"
-            >
-              <Play size={16} className="fill-current" />
-              Explore your workspace
-            </Link>
-          </div>
-        </div>
+      <section className="relative mx-auto max-w-7xl px-5 pb-20 pt-14 sm:px-8 sm:pt-20 lg:pb-28 lg:pt-24">
+        <div className="pointer-events-none absolute -right-40 -top-28 h-[30rem] w-[30rem] rounded-full bg-brand-100/30 blur-3xl" />
 
-        <div className="relative mx-auto mt-20 max-w-5xl rounded-2xl border border-taskly bg-taskly-surface p-2 shadow-2xl shadow-blue-950/40 sm:mt-24">
-          <div className="rounded-xl border border-slate-800 bg-[#06101D] p-4 sm:p-6">
-            <div className="mb-5 flex items-center justify-between border-b border-slate-800 pb-4">
-              <div className="flex items-center gap-3">
-                <span className="h-3 w-3 rounded-full bg-blue-600" />
-                <span className="text-sm font-semibold text-slate-200">
-                  Product launch
-                </span>
-              </div>
-              <span className="text-xs text-slate-500">This week</span>
+        <div className="relative grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-taskly bg-taskly-surface-muted px-4 py-2 text-xs font-semibold tracking-wide text-taskly-muted">
+              <Sparkles size={14} aria-hidden="true" />
+              REAL-TIME ANALYTICS
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  title: "To do",
-                  color: "border-slate-700",
-                  tasks: ["Research user needs", "Define launch goals"],
-                },
-                {
-                  title: "In progress",
-                  color: "border-blue-800",
-                  tasks: ["Design landing page", "Prepare announcement"],
-                },
-                {
-                  title: "Done",
-                  color: "border-emerald-900",
-                  tasks: ["Create workspace", "Invite the team"],
-                },
-              ].map((column) => (
+            <h1 className="max-w-2xl text-balance text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+              Analytics dashboards built for serious execution
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
+              Monitor live performance, collaborate on priorities, and turn data
+              into action with a dashboard designed for clarity and execution.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link
+                to="/register"
+                className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-taskly-brand px-6 py-3 font-semibold text-white shadow-xl shadow-blue-950/55 transition hover:bg-brand-500"
+              >
+                Start free trial
+                <ArrowRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-taskly bg-taskly-surface px-6 py-3 font-semibold text-taskly-foreground transition hover:bg-taskly-surface-muted"
+              >
+                <Play size={16} aria-hidden="true" className="fill-current" />
+                View demo
+              </Link>
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {metrics.map((metric) => (
                 <div
-                  key={column.title}
-                  className={`rounded-xl border ${column.color} bg-slate-950/40 p-3`}
+                  key={metric.label}
+                  className="rounded-2xl border border-taskly bg-taskly-surface p-4"
                 >
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                      {column.title}
-                    </span>
-                    <span className="text-xs text-slate-600">
-                      {column.tasks.length}
-                    </span>
+                  <div className="text-xs text-taskly-muted">{metric.label}</div>
+                  <div className="mt-2 text-2xl font-bold text-white">
+                    {metric.value}
                   </div>
-                  <div className="space-y-2">
-                    {column.tasks.map((task) => (
-                      <div
-                        key={task}
-                        className="rounded-lg border border-taskly bg-taskly-surface-muted p-3 text-left text-sm text-taskly-foreground shadow-lg"
-                      >
-                        {task}
-                      </div>
-                    ))}
+                  <div className="mt-1 text-xs font-semibold text-emerald-300">
+                    {metric.delta}
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          <div className="rounded-3xl border border-taskly bg-taskly-surface p-4 shadow-xl shadow-slate-950/25 sm:p-6">
+            <div className="rounded-2xl border border-taskly bg-taskly-surface-muted p-4 sm:p-5">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-white">
+                    Revenue Performance
+                  </p>
+                  <p className="mt-1 text-xs text-taskly-muted">
+                    Last 24h · live refreshed
+                  </p>
+                </div>
+                <span className="rounded-full border border-emerald-500/35 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-300">
+                  Live
+                </span>
+              </div>
+              <div className="mb-5 h-36 rounded-xl border border-taskly bg-taskly-surface p-4">
+                <div className="flex h-full items-end gap-2">
+                  {[36, 45, 40, 58, 52, 66, 72, 61, 74, 81, 78, 92].map(
+                    (bar, index) => (
+                      <div
+                        key={index}
+                        className="flex-1 rounded-t bg-gradient-to-t from-brand-600 to-brand-500/75"
+                        style={{ height: `${bar}%` }}
+                        aria-hidden="true"
+                      />
+                    ),
+                  )}
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-taskly bg-taskly-surface p-3">
+                  <p className="text-xs text-taskly-muted">Conversion rate</p>
+                  <p className="mt-1 text-lg font-semibold text-white">7.24%</p>
+                </div>
+                <div className="rounded-xl border border-taskly bg-taskly-surface p-3">
+                  <p className="text-xs text-taskly-muted">Avg. response</p>
+                  <p className="mt-1 text-lg font-semibold text-white">213ms</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="border-y border-slate-900 bg-[#050F1B]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:px-8 md:grid-cols-3">
-          {[
-            {
-              icon: KanbanSquare,
-              title: "See the whole picture",
-              text: "Organize every project in boards that make priorities obvious.",
-            },
-            {
-              icon: Users,
-              title: "Move together",
-              text: "Give your team context, ownership and a shared place to focus.",
-            },
-            {
-              icon: Check,
-              title: "Finish with confidence",
-              text: "Keep momentum with clear tasks, activity and progress you can trust.",
-            },
-          ].map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-950 text-blue-400">
-                <Icon size={20} />
+      <section className="border-y border-taskly bg-taskly-surface/55">
+        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
+          <div className="mb-8 max-w-2xl">
+            <h2 className="text-3xl font-bold text-white">
+              Feature highlights built for fast execution
+            </h2>
+            <p className="mt-3 text-taskly-muted">
+              Every screen is designed for clarity: understand the signal,
+              assign ownership, and unblock delivery.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {features.map(({ icon: Icon, title, text }) => (
+              <article
+                key={title}
+                className="rounded-2xl border border-taskly bg-taskly-surface p-5"
+              >
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-taskly bg-taskly-surface-muted text-brand-500">
+                  <Icon size={20} aria-hidden="true" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-taskly-muted">{text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+            Pricing that scales with your team
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-taskly-muted">
+            Start fast, grow confidently, and keep advanced controls ready when
+            operations get complex.
+          </p>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-3">
+          {pricing.map((plan) => (
+            <article
+              key={plan.tier}
+              className={`rounded-2xl border p-6 ${
+                plan.highlight
+                  ? "border-blue-600/60 bg-blue-900/20 shadow-xl shadow-blue-950/35"
+                  : "border-taskly bg-taskly-surface"
+              }`}
+            >
+              <div className="mb-5">
+                <h3 className="text-xl font-semibold text-white">{plan.tier}</h3>
+                <p className="mt-1 text-sm text-taskly-muted">{plan.summary}</p>
               </div>
-              <div>
-                <h2 className="font-semibold text-white">{title}</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-500">{text}</p>
+              <div className="mb-6 flex items-end gap-1">
+                <span className="text-4xl font-bold text-white">{plan.price}</span>
+                {plan.period ? (
+                  <span className="pb-1 text-sm text-taskly-muted">{plan.period}</span>
+                ) : null}
               </div>
-            </div>
+              <ul className="space-y-2">
+                {plan.items.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-taskly-foreground">
+                    <Check size={16} className="mt-0.5 shrink-0 text-blue-300" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to={plan.tier === "Enterprise" ? "/login" : "/register"}
+                className={`mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                  plan.highlight
+                    ? "bg-taskly-brand text-white hover:bg-brand-500"
+                    : "border border-taskly bg-taskly-surface-muted text-taskly-foreground hover:bg-taskly-surface"
+                }`}
+              >
+                {plan.cta}
+              </Link>
+            </article>
           ))}
+        </div>
+      </section>
+
+      <section className="border-y border-taskly bg-taskly-surface/55">
+        <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+          <p className="mb-4 text-center text-xs font-semibold tracking-[0.12em] text-taskly-muted">
+            TRUSTED BY TEAMS WORLDWIDE
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { icon: Globe2, label: "Global-first architecture" },
+              { icon: BadgeCheck, label: "99.97% uptime track record" },
+              { icon: BarChart3, label: "Actionable analytics" },
+              { icon: Check, label: "SOC-ready workflows" },
+            ].map(({ icon: Icon, label }) => (
+              <div
+                key={label}
+                className="flex min-h-11 items-center gap-3 rounded-xl border border-taskly bg-taskly-surface px-4 py-3"
+              >
+                <Icon size={18} className="text-brand-500" aria-hidden="true" />
+                <span className="text-sm font-medium text-taskly-foreground">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

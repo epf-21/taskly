@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-600: #1e40af;
-  --color-brand-500: #1d4ed8;
-  --color-brand-100: #0f1f4d;
-  --color-background: #030b16;
-  --color-surface: #081525;
-  --color-surface-muted: #0d2038;
-  --color-foreground: #e6f0ff;
-  --color-muted: #8ea4bf;
-  --color-border: #183554;
+  --color-brand-600: #3451d1;
+  --color-brand-500: #4864de;
+  --color-brand-100: #1b2750;
+  --color-background: #0f141d;
+  --color-surface: #171d28;
+  --color-surface-muted: #1e2735;
+  --color-foreground: #eef2f8;
+  --color-muted: #9ba6b8;
+  --color-border: #2a3547;
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-danger: #f87171;
@@ -17,11 +17,12 @@
 
 :root {
   color-scheme: dark;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: "IBM Plex Sans", Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
   background: var(--color-background);
   color: var(--color-foreground);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  line-height: 1.5;
 }
 
 @layer utilities {
@@ -58,11 +59,7 @@
   }
 
   .bg-taskly-brand-soft {
-    background-color: color-mix(
-      in srgb,
-      var(--color-brand-100) 70%,
-      transparent
-    );
+    background-color: rgb(52 81 209 / 14%);
   }
 }
 
@@ -72,15 +69,37 @@
 
 body {
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
-  background:
-    radial-gradient(
-      circle at 85% -10%,
-      rgb(29 78 216 / 16%),
-      transparent 32rem
-    ),
-    var(--color-background);
+  background: var(--color-background);
+}
+
+::selection {
+  background: rgb(52 81 209 / 28%);
+  color: var(--color-foreground);
+}
+
+* {
+  scrollbar-color: #3a4a61 #121a26;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #121a26;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #3a4a61;
+  border-radius: 9999px;
+  border: 2px solid #121a26;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #4d607b;
 }
 
 button,
@@ -88,4 +107,25 @@ input,
 textarea,
 select {
   font: inherit;
+  caret-color: var(--color-brand-500);
+}
+
+a {
+  text-underline-offset: 0.22em;
+}
+
+:where(button, a, input, textarea, select, summary):focus-visible {
+  outline: 2px solid rgb(72 100 222 / 80%);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

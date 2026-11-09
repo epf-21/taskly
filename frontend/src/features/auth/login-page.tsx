@@ -40,7 +40,7 @@ export const LoginPage = () => {
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
         <Link to="/" className="inline-flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-taskly-brand text-lg font-bold">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-800/55 bg-taskly-brand text-lg font-bold shadow-lg shadow-blue-950/45">
             T
           </span>
           <span className="text-xl font-bold text-white">Taskly</span>
@@ -66,9 +66,9 @@ export const LoginPage = () => {
               <div className="flex flex-col gap-2 space-y-2">
                 <label
                   htmlFor={field.name}
-                  className="text-slate-300 font-medium gap-2 flex items-center flex-wrap text-sm"
+                  className="flex items-center gap-2 text-sm font-medium text-taskly-foreground"
                 >
-                  <Mail className="w-5 h-5" />
+                  <Mail className="h-5 w-5 text-taskly-muted" />
                   <span>Email</span>
                 </label>
                 <Input
@@ -96,9 +96,9 @@ export const LoginPage = () => {
               <div className="flex flex-col gap-2 space-y-2">
                 <label
                   htmlFor={field.name}
-                  className="text-slate-300 font-medium gap-2 flex items-center flex-wrap text-sm"
+                  className="flex items-center gap-2 text-sm font-medium text-taskly-foreground"
                 >
-                  <LockKeyhole className="w-5 h-5" />
+                  <LockKeyhole className="h-5 w-5 text-taskly-muted" />
                   <span>Password</span>
                 </label>
                 <Input
@@ -135,11 +135,11 @@ export const LoginPage = () => {
           />
         </form>
       </Card>
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-taskly-muted">
         New to Taskly?{" "}
         <Link
           to="/register"
-          className="font-medium text-blue-400 hover:text-blue-300"
+          className="font-medium text-blue-300 hover:text-blue-200"
         >
           Create an account
         </Link>

@@ -17,13 +17,13 @@ export const Header = ({ onClick }: Props) => {
 
   const currentSection = getCurrentSection(pathname);
   return (
-    <header className="flex h-16 items-center justify-between border-b border-taskly px-5 sm:px-8">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-taskly bg-taskly-background px-5 sm:px-8">
       <div className="flex items-center gap-3">
         <button
           type="button"
           aria-label="Open navigation"
           onClick={() => onClick()}
-          className="rounded-lg p-2 text-taskly-muted hover:bg-taskly-surface-muted hover:text-taskly-foreground lg:hidden"
+          className="rounded-lg border border-transparent p-2 text-taskly-muted transition hover:border-taskly hover:bg-taskly-surface-muted hover:text-taskly-foreground lg:hidden"
         >
           <Menu size={19} />
         </button>
@@ -41,7 +41,7 @@ export const Header = ({ onClick }: Props) => {
           aria-label="Sign out"
           disabled={isPending}
           onClick={() => logout()}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-taskly-brand-soft text-taskly-brand transition hover:bg-taskly-surface-muted"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-taskly bg-taskly-surface-muted text-taskly-foreground transition hover:bg-taskly-surface"
         >
           <LogOut size={16} />
         </button>
