@@ -131,9 +131,6 @@ export const DashboardPage = () => {
           setBoardDialogOpen(true);
         }}
       />
-
-      <DashboardStats />
-
       {workspaces.length === 0 ? (
         <EmptyState
           title="Create your first workspace"
@@ -181,9 +178,9 @@ export const DashboardPage = () => {
         initialValues={
           editingWorkspace
             ? {
-                name: editingWorkspace.name,
-                description: editingWorkspace.description ?? "",
-              }
+              name: editingWorkspace.name,
+              description: editingWorkspace.description ?? "",
+            }
             : undefined
         }
         onClose={() => setWorkspaceDialogOpen(false)}
@@ -207,9 +204,9 @@ export const DashboardPage = () => {
           initialValues={
             editingBoard
               ? {
-                  name: editingBoard.name,
-                  description: editingBoard.description ?? "",
-                }
+                name: editingBoard.name,
+                description: editingBoard.description ?? "",
+              }
               : undefined
           }
           onClose={() => setBoardDialogOpen(false)}
