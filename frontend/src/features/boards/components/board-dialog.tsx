@@ -67,6 +67,7 @@ export const BoardDialog = ({
                 <span>Name</span>
               </label>
               <Input
+                id={field.name}
                 type="text"
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
@@ -86,10 +87,14 @@ export const BoardDialog = ({
           name="description"
           children={(field) => (
             <div className="flex flex-col gap-2 space-y-2">
-              <label className="flex flez-wrap text-sm font-medium text-taskly-foreground">
+              <label
+                htmlFor={field.name}
+                className="flex flex-wrap text-sm font-medium text-taskly-foreground"
+              >
                 <span>Description</span>
               </label>
               <Textarea
+                id={field.name}
                 maxLength={1000}
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
@@ -113,7 +118,7 @@ export const BoardDialog = ({
           >
             {([canSubmit, isSubmitting]) => (
               <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save workspace"}
+                {isSubmitting ? "Saving..." : "Save board"}
               </Button>
             )}
           </form.Subscribe>

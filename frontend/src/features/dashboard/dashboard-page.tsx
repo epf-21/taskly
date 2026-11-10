@@ -25,7 +25,7 @@ import {
 import type { Workspace } from "@/features/workspaces/workspace.types";
 import type { Board } from "@/features/boards/board.types";
 import { BoardDialog } from "@/features/boards/components";
-import { DashboardHeader, DashboardStats } from "./components";
+import { DashboardHeader } from "./components";
 
 export const DashboardPage = () => {
   const { data: user } = useCurrentUser();

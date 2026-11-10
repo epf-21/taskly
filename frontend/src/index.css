@@ -1,28 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-brand-600: #3451d1;
-  --color-brand-500: #4864de;
-  --color-brand-100: #1b2750;
-  --color-background: #0f141d;
-  --color-surface: #171d28;
-  --color-surface-muted: #1e2735;
-  --color-foreground: #eef2f8;
-  --color-muted: #9ba6b8;
-  --color-border: #2a3547;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
+  /* Brand */
+  --color-brand-700: #1d4ed8;
+  --color-brand-600: #2563eb;
+  --color-brand-500: #3b82f6;
+  --color-brand-400: #60a5fa;
+  --color-brand-100: #1e293b;
+
+  /* Surfaces */
+  --color-background: #0a0f1a;
+  --color-surface: #111827;
+  --color-surface-muted: #172033;
+  --color-elevated: #1e293b;
+
+  /* Text */
+  --color-foreground: #f1f5f9;
+  --color-muted: #94a3b8;
+  --color-subtle: #64748b;
+
+  /* Lines */
+  --color-border: #243043;
+  --color-border-strong: #334155;
+
+  /* Status */
+  --color-success: #34d399;
+  --color-success-strong: #15803d;
+  --color-warning: #fbbf24;
+  --color-warning-strong: #b45309;
   --color-danger: #f87171;
+  --color-danger-strong: #dc2626;
+  --color-info: #38bdf8;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
 }
 
 :root {
   color-scheme: dark;
-  font-family: "IBM Plex Sans", Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
   background: var(--color-background);
   color: var(--color-foreground);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @layer utilities {
@@ -38,6 +61,10 @@
     background-color: var(--color-surface-muted);
   }
 
+  .bg-taskly-elevated {
+    background-color: var(--color-elevated);
+  }
+
   .text-taskly-foreground {
     color: var(--color-foreground);
   }
@@ -46,8 +73,16 @@
     color: var(--color-muted);
   }
 
+  .text-taskly-subtle {
+    color: var(--color-subtle);
+  }
+
   .border-taskly {
     border-color: var(--color-border);
+  }
+
+  .border-taskly-strong {
+    border-color: var(--color-border-strong);
   }
 
   .bg-taskly-brand {
@@ -55,11 +90,23 @@
   }
 
   .text-taskly-brand {
-    color: var(--color-brand-500);
+    color: var(--color-brand-400);
   }
 
   .bg-taskly-brand-soft {
-    background-color: rgb(52 81 209 / 14%);
+    background-color: color-mix(in srgb, var(--color-brand-500) 14%, transparent);
+  }
+
+  .text-taskly-success {
+    color: var(--color-success);
+  }
+
+  .text-taskly-warning {
+    color: var(--color-warning);
+  }
+
+  .text-taskly-danger {
+    color: var(--color-danger);
   }
 }
 
@@ -67,20 +114,36 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   min-width: 320px;
   min-height: 100dvh;
   margin: 0;
   background: var(--color-background);
+  line-height: 1.6;
+  letter-spacing: -0.006em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 ::selection {
-  background: rgb(52 81 209 / 28%);
+  background: color-mix(in srgb, var(--color-brand-500) 32%, transparent);
   color: var(--color-foreground);
 }
 
 * {
-  scrollbar-color: #3a4a61 #121a26;
+  scrollbar-color: var(--color-border-strong) var(--color-background);
 }
 
 *::-webkit-scrollbar {
@@ -89,17 +152,17 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: #121a26;
+  background: var(--color-background);
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #3a4a61;
+  background: var(--color-border-strong);
   border-radius: 9999px;
-  border: 2px solid #121a26;
+  border: 2px solid var(--color-background);
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #4d607b;
+  background: var(--color-muted);
 }
 
 button,
@@ -107,15 +170,20 @@ input,
 textarea,
 select {
   font: inherit;
-  caret-color: var(--color-brand-500);
+  caret-color: var(--color-brand-400);
+}
+
+option {
+  background-color: var(--color-surface-muted);
+  color: var(--color-foreground);
 }
 
 a {
   text-underline-offset: 0.22em;
 }
 
-:where(button, a, input, textarea, select, summary):focus-visible {
-  outline: 2px solid rgb(72 100 222 / 80%);
+:where(button, a, input, textarea, select, summary, [role="button"]):focus-visible {
+  outline: 2px solid var(--color-brand-400);
   outline-offset: 2px;
 }
 

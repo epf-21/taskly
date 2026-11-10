@@ -16,7 +16,10 @@ export const MobileNavigation = ({ open, onNavigate }: Props) => {
   if (!open) return null;
 
   return (
-    <nav className="border-b border-taskly bg-taskly-surface px-5 py-3 lg:hidden">
+    <nav
+      aria-label="Main navigation"
+      className="border-b border-taskly bg-taskly-surface px-5 py-3 lg:hidden"
+    >
       <div className="grid gap-1 sm:grid-cols-3">
         <NavigationItem
           to="/dashboard"

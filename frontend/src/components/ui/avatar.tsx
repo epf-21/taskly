@@ -17,7 +17,7 @@ export const Avatar = ({ name, src, className }: Props) => {
     <span
       aria-label={name}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full border border-taskly bg-taskly-surface-muted text-sm font-semibold text-taskly-foreground",
+        "flex h-9 w-9 items-center justify-center rounded-full border border-taskly-strong bg-taskly-surface-muted text-sm font-semibold text-taskly-foreground",
         className,
       )}
     >

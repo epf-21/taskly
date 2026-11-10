@@ -17,15 +17,17 @@ export const EmptyState = ({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-dashed border-slate-700/90 bg-taskly-surface p-8 text-center",
+        "rounded-xl border border-dashed border-taskly-strong bg-taskly-surface p-8 text-center",
         className,
       )}
     >
-      <h2 className="font-semibold text-slate-100">{title}</h2>
+      <h2 className="font-semibold text-taskly-foreground">{title}</h2>
       {description && (
-        <p className="mt-2 text-sm text-taskly-muted">{description}</p>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-taskly-muted">
+          {description}
+        </p>
       )}
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
 };

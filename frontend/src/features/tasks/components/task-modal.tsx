@@ -1,6 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import type { CreateTask, TaskPriority } from "../tasks.type";
-import { Button, Input, InputMessageErrors, Modal } from "@/components/ui";
+import {
+  Button,
+  Input,
+  InputMessageErrors,
+  Modal,
+  Textarea,
+} from "@/components/ui";
 import { defaultValues, TaskSchema } from "../dto/task-dto";
 
 interface Props {
@@ -20,6 +26,7 @@ export const TaskModal = ({ open, onClose, onSubmit }: Props) => {
         description: value.description?.trim() ?? "",
       }),
   });
+
   return (
     <Modal open={open} title="Create task" onClose={onClose}>
       <form
@@ -31,50 +38,74 @@ export const TaskModal = ({ open, onClose, onSubmit }: Props) => {
       >
         <form.Field
           name="title"
-          children={(field) => (
-            <div className="space-y-0.5">
-              <Input
-                autoFocus
-                value={field.state.value}
-                onChange={(event) => field.handleChange(event.target.value)}
-                placeholder="Task title"
-              />
-              {!field.state.meta.isValid && (
-                <InputMessageErrors
-                  message={field.state.meta.errors
-                    .map((e) => e?.message)
-                    .join(" ")}
+          children={(field) => {
+            const invalid = !field.state.meta.isValid;
+            return (
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor={field.name}
+                  className="text-sm font-medium text-taskly-foreground"
+                >
+                  Title
+                </label>
+                <Input
+                  id={field.name}
+                  autoFocus
+                  value={field.state.value}
+                  onChange={(event) => field.handleChange(event.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="What needs to be done?"
+                  aria-invalid={invalid}
+                  aria-describedby={invalid ? `${field.name}-error` : undefined}
                 />
-              )}
-            </div>
-          )}
+                {invalid && (
+                  <InputMessageErrors
+                    id={`${field.name}-error`}
+                    message={field.state.meta.errors
+                      .map((e) => e?.message)
+                      .join(" ")}
+                  />
+                )}
+              </div>
+            );
+          }}
         />
         <form.Field
           name="description"
           children={(field) => (
-            <div className="spcae-y-0.5">
-              <textarea
-                className="min-h-24 w-full rounded-lg border border-taskly bg-taskly-surface-muted p-3 text-sm text-taskly-foreground outline-none"
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor={field.name}
+                className="text-sm font-medium text-taskly-foreground"
+              >
+                Description
+                <span className="ml-1 text-xs font-normal text-taskly-subtle">
+                  (optional)
+                </span>
+              </label>
+              <Textarea
+                id={field.name}
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
-                placeholder="Description (optional)"
+                onBlur={field.handleBlur}
+                placeholder="Add context, links, or acceptance criteria"
               />
-              {!field.state.meta.isValid && (
-                <InputMessageErrors
-                  message={field.state.meta.errors
-                    .map((e) => e?.message)
-                    .join(" ")}
-                />
-              )}
             </div>
           )}
         />
         <form.Field
           name="priority"
           children={(field) => (
-            <div className="space-y-0.5">
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor={field.name}
+                className="text-sm font-medium text-taskly-foreground"
+              >
+                Priority
+              </label>
               <select
-                className="w-full rounded-lg border border-taskly bg-taskly-surface-muted p-3 text-sm text-taskly-foreground"
+                id={field.name}
+                className="min-h-11 rounded-lg border border-taskly-strong bg-taskly-surface-muted px-3 text-sm text-taskly-foreground outline-none focus:border-brand-400"
                 value={field.state.value}
                 onChange={(event) =>
                   field.handleChange(event.target.value as TaskPriority)
@@ -85,17 +116,10 @@ export const TaskModal = ({ open, onClose, onSubmit }: Props) => {
                 <option value="high">High</option>
                 <option value="urgent">Urgent</option>
               </select>
-              {!field.state.meta.isValid && (
-                <InputMessageErrors
-                  message={field.state.meta.errors
-                    .map((e) => e?.message)
-                    .join(" ")}
-                />
-              )}
             </div>
           )}
         />
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 pt-1">
           <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>

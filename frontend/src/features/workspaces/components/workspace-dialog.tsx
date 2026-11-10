@@ -67,6 +67,7 @@ export const WorkspaceDialog = ({
                 <span>Name</span>
               </label>
               <Input
+                id={field.name}
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
               />
@@ -85,10 +86,14 @@ export const WorkspaceDialog = ({
           name="description"
           children={(field) => (
             <div className="flex flex-col gap-2 space-y-2">
-              <label className="flex flez-wrap text-sm font-medium text-taskly-foreground">
+              <label
+                htmlFor={field.name}
+                className="flex flex-wrap text-sm font-medium text-taskly-foreground"
+              >
                 <span>Description</span>
               </label>
               <Textarea
+                id={field.name}
                 maxLength={1000}
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}

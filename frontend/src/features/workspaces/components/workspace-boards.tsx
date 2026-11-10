@@ -40,7 +40,7 @@ export const WorkspaceBoards = ({
           <p className="text-xs font-medium uppercase tracking-wider text-taskly-brand">
             Selected workspace
           </p>
-          <h2 className="mt-1 font-semibold text-white">{workspace?.name}</h2>
+          <h2 className="mt-1 font-semibold text-taskly-foreground">{workspace?.name}</h2>
         </div>
         <div className="flex items-center gap-2">
           {workspace && canManageWorkspace && (
@@ -68,7 +68,7 @@ export const WorkspaceBoards = ({
               {boards?.length ?? 0} active boards
             </p>
           </div>
-          <Users size={17} className="text-taskly-muted" />
+          <Users size={17} className="text-taskly-muted" aria-hidden="true" />
         </div>
         {isLoading ? (
           <div className="grid gap-3 sm:grid-cols-2">

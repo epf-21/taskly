@@ -26,7 +26,7 @@ export const DashboardHeader = ({
         <p className="mb-2 text-sm font-medium text-taskly-brand">
           Workspace overview
         </p>
-        <h1 className="text-3xl font-bold tracking-tight text-white">
+        <h1 className="text-3xl font-bold tracking-tight text-taskly-foreground">
           Welcome back
           {firstName}
         </h1>
@@ -36,11 +36,11 @@ export const DashboardHeader = ({
       </div>
       <div className="flex flex-wrap gap-3">
         <Button variant="secondary" onClick={onNewWorkspace}>
-          <Plus size={17} /> New workspace
+          <Plus size={17} aria-hidden="true" /> New workspace
         </Button>
         {selectedWorkspace && canManageWorkspace && (
           <Button onClick={onNewBoard}>
-            <FolderKanban size={17} /> New board
+            <FolderKanban size={17} aria-hidden="true" /> New board
           </Button>
         )}
       </div>

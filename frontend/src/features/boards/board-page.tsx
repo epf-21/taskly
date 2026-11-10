@@ -95,7 +95,7 @@ export const BoardPage = () => {
       </Link>
       <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-taskly-brand-soft text-taskly-brand">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-taskly-brand-soft text-taskly-brand">
             <FolderKanban size={22} />
           </span>
           <div>
@@ -124,15 +124,17 @@ export const BoardPage = () => {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search tasks..."
+            aria-label="Search tasks"
             className="pl-9"
           />
         </div>
         <select
+          aria-label="Filter by priority"
           value={priority}
           onChange={(event) =>
             setPriority(event.target.value as TaskPriority | "all")
           }
-          className="min-h-11 rounded-xl border border-taskly bg-taskly-surface-muted px-3 py-2.5 text-sm text-taskly-foreground shadow-inner shadow-slate-950/20"
+          className="min-h-11 rounded-lg border border-taskly-strong bg-taskly-surface-muted px-3 py-2.5 text-sm text-taskly-foreground outline-none focus:border-brand-400"
         >
           <option value="all">All priorities</option>
           <option value="low">Low</option>

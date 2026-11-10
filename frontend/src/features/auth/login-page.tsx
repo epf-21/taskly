@@ -40,12 +40,14 @@ export const LoginPage = () => {
     <div className="w-full max-w-md">
       <div className="mb-8 text-center">
         <Link to="/" className="inline-flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-800/55 bg-taskly-brand text-lg font-bold shadow-lg shadow-blue-950/45">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-brand-500/40 bg-brand-600 text-lg font-bold text-white">
             T
           </span>
-          <span className="text-xl font-bold text-white">Taskly</span>
+          <span className="text-xl font-bold text-taskly-foreground">Taskly</span>
         </Link>
-        <h1 className="mt-8 text-2xl font-bold text-white">Welcome back</h1>
+        <h1 className="mt-8 text-2xl font-bold text-taskly-foreground">
+          Welcome back
+        </h1>
         <p className="mt-2 text-sm text-taskly-muted">
           Sign in to continue to your workspace.
         </p>
@@ -62,66 +64,85 @@ export const LoginPage = () => {
         >
           <form.Field
             name="email"
-            children={(field) => (
-              <div className="flex flex-col gap-2 space-y-2">
-                <label
-                  htmlFor={field.name}
-                  className="flex items-center gap-2 text-sm font-medium text-taskly-foreground"
-                >
-                  <Mail className="h-5 w-5 text-taskly-muted" />
-                  <span>Email</span>
-                </label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={(event) => field.handleChange(event.target.value)}
-                  type="text"
-                  placeholder="Enter your email address"
-                  aria-required="true"
-                />
-                {!field.state.meta.isValid && (
-                  <InputMessageErrors
-                    message={field.state.meta.errors
-                      .map((e) => e?.message)
-                      .join(" ")}
+            children={(field) => {
+              const invalid = !field.state.meta.isValid;
+              return (
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor={field.name}
+                    className="flex items-center gap-2 text-sm font-medium text-taskly-foreground"
+                  >
+                    <Mail className="h-4 w-4 text-taskly-muted" aria-hidden="true" />
+                    <span>Email</span>
+                  </label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    aria-required="true"
+                    aria-invalid={invalid}
+                    aria-describedby={invalid ? `${field.name}-error` : undefined}
                   />
-                )}
-              </div>
-            )}
+                  {invalid && (
+                    <InputMessageErrors
+                      id={`${field.name}-error`}
+                      message={field.state.meta.errors
+                        .map((e) => e?.message)
+                        .join(" ")}
+                    />
+                  )}
+                </div>
+              );
+            }}
           />
           <form.Field
             name="password"
-            children={(field) => (
-              <div className="flex flex-col gap-2 space-y-2">
-                <label
-                  htmlFor={field.name}
-                  className="flex items-center gap-2 text-sm font-medium text-taskly-foreground"
-                >
-                  <LockKeyhole className="h-5 w-5 text-taskly-muted" />
-                  <span>Password</span>
-                </label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onChange={(event) => field.handleChange(event.target.value)}
-                  type="password"
-                  placeholder="Enter your password"
-                  aria-required="true"
-                />
-                {!field.state.meta.isValid && (
-                  <InputMessageErrors
-                    message={field.state.meta.errors
-                      .map((e) => e?.message)
-                      .join("")}
+            children={(field) => {
+              const invalid = !field.state.meta.isValid;
+              return (
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor={field.name}
+                    className="flex items-center gap-2 text-sm font-medium text-taskly-foreground"
+                  >
+                    <LockKeyhole
+                      className="h-4 w-4 text-taskly-muted"
+                      aria-hidden="true"
+                    />
+                    <span>Password</span>
+                  </label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder="Enter your password"
+                    aria-required="true"
+                    aria-invalid={invalid}
+                    aria-describedby={invalid ? `${field.name}-error` : undefined}
                   />
-                )}
-              </div>
-            )}
+                  {invalid && (
+                    <InputMessageErrors
+                      id={`${field.name}-error`}
+                      message={field.state.meta.errors
+                        .map((e) => e?.message)
+                        .join(" ")}
+                    />
+                  )}
+                </div>
+              );
+            }}
           />
           {errorMessage && (
-            <p role="alert" className="text-sm text-red-300">
+            <p role="alert" className="text-sm text-taskly-danger">
               {errorMessage}
             </p>
           )}
@@ -139,7 +160,7 @@ export const LoginPage = () => {
         New to Taskly?{" "}
         <Link
           to="/register"
-          className="font-medium text-blue-300 hover:text-blue-200"
+          className="font-medium text-taskly-brand hover:text-brand-500"
         >
           Create an account
         </Link>

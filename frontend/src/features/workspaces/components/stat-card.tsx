@@ -30,7 +30,7 @@ export const StatCard = ({
         <span className="text-sm text-taskly-muted">{label}</span>
         {icon}
       </div>
-      <p className="mt-4 text-3xl font-bold text-white">{value}</p>
+      <p className="mt-4 text-3xl font-bold text-taskly-foreground">{value}</p>
       <p className="mt-2 text-xs text-taskly-muted">{detail}</p>
     </Card>
   );

@@ -93,7 +93,7 @@ export const KanbanBoard = ({
             <button
               type="button"
               onClick={() => setColumnDialog("new")}
-              className="flex h-24 min-w-72 items-center justify-center rounded-xl border border-dashed border-taskly bg-taskly-surface-muted text-sm text-taskly-muted hover:border-brand-500 hover:text-taskly-foreground"
+              className="flex h-24 min-w-72 cursor-pointer items-center justify-center rounded-xl border border-dashed border-taskly-strong bg-taskly-surface-muted text-sm text-taskly-muted transition-colors hover:border-brand-500 hover:text-taskly-foreground"
             >
               <Plus size={16} className="mr-2" /> Add column
             </button>

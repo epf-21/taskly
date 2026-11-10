@@ -69,15 +69,15 @@ export const TaskDetailPage = ({ taskId }: { taskId: string }) => {
 
   if (detailQuery.isLoading || !draft) {
     return (
-      <div className="mx-auto max-w-4xl rounded-2xl border border-taskly bg-taskly-surface p-8">
+      <div className="mx-auto max-w-4xl rounded-xl border border-taskly bg-taskly-surface p-8">
         <p className="text-sm text-taskly-muted">Loading task...</p>
       </div>
     );
   }
   if (detailQuery.isError || !detailQuery.data) {
     return (
-      <div className="mx-auto max-w-4xl rounded-2xl border border-taskly bg-taskly-surface p-8">
-        <p className="text-sm text-danger">Unable to load this task.</p>
+      <div className="mx-auto max-w-4xl rounded-xl border border-taskly bg-taskly-surface p-8">
+        <p className="text-sm text-taskly-danger">Unable to load this task.</p>
       </div>
     );
   }
@@ -108,25 +108,44 @@ export const TaskDetailPage = ({ taskId }: { taskId: string }) => {
           Back to board
         </Link>
       </div>
-      <div className="space-y-6 rounded-2xl border border-taskly bg-taskly-surface p-5 sm:p-8">
+      <div className="space-y-6 rounded-xl border border-taskly bg-taskly-surface p-5 sm:p-8">
         <section className="space-y-3">
-          <Input
-            value={draft.title}
-            onChange={(event) =>
-              setDraft({ ...draft, title: event.target.value })
-            }
-          />
-          <textarea
-            className="min-h-28 w-full rounded-lg border border-taskly bg-taskly-surface-muted p-3 text-sm text-taskly-foreground outline-none"
-            value={draft.description ?? ""}
-            onChange={(event) =>
-              setDraft({ ...draft, description: event.target.value })
-            }
-            placeholder="Description"
-          />
+          <div className="space-y-1.5">
+            <label
+              htmlFor="task-title"
+              className="text-sm font-medium text-taskly-foreground"
+            >
+              Title
+            </label>
+            <Input
+              id="task-title"
+              value={draft.title}
+              onChange={(event) =>
+                setDraft({ ...draft, title: event.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label
+              htmlFor="task-description"
+              className="text-sm font-medium text-taskly-foreground"
+            >
+              Description
+            </label>
+            <textarea
+              id="task-description"
+              className="min-h-28 w-full resize-y rounded-lg border border-taskly-strong bg-taskly-surface-muted p-3 text-sm text-taskly-foreground outline-none placeholder:text-taskly-subtle focus:border-brand-400"
+              value={draft.description ?? ""}
+              onChange={(event) =>
+                setDraft({ ...draft, description: event.target.value })
+              }
+              placeholder="Add context, links, or acceptance criteria"
+            />
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <select
-              className="rounded-lg border border-taskly bg-taskly-surface-muted p-3 text-sm text-taskly-foreground"
+              aria-label="Priority"
+              className="min-h-11 rounded-lg border border-taskly-strong bg-taskly-surface-muted p-3 text-sm text-taskly-foreground outline-none focus:border-brand-400"
               value={draft.priority}
               onChange={(event) =>
                 setDraft({
@@ -142,6 +161,7 @@ export const TaskDetailPage = ({ taskId }: { taskId: string }) => {
             </select>
             <Input
               type="date"
+              aria-label="Due date"
               value={draft.dueDate ?? ""}
               onChange={(event) =>
                 setDraft({ ...draft, dueDate: event.target.value })
@@ -294,7 +314,7 @@ export const TaskDetailPage = ({ taskId }: { taskId: string }) => {
                 <div className="mt-2 flex gap-2">
                   <button
                     type="button"
-                    className="text-xs text-taskly-brand"
+                    className="cursor-pointer rounded px-2 py-1 text-xs text-taskly-brand transition-colors hover:bg-taskly-surface-muted"
                     onClick={() => {
                       const content = window.prompt(
                         "Edit comment",
@@ -311,7 +331,7 @@ export const TaskDetailPage = ({ taskId }: { taskId: string }) => {
                   </button>
                   <button
                     type="button"
-                    className="text-xs text-danger"
+                    className="cursor-pointer rounded px-2 py-1 text-xs text-taskly-danger transition-colors hover:bg-red-500/10"
                     onClick={() => deleteComment.mutate(entry.id)}
                   >
                     Delete
@@ -366,7 +386,7 @@ export const TaskDetailPage = ({ taskId }: { taskId: string }) => {
             <p className="text-sm text-taskly-muted">Loading activity...</p>
           ) : activityQuery.data?.length ? (
             activityQuery.data.map((entry) => (
-              <div key={entry.id} className="border-l-2 border-taskly-brand pl-3">
+              <div key={entry.id} className="border-l-2 border-brand-500 pl-3">
                 <p className="text-sm text-taskly-foreground">{activityLabel(entry.action)}</p>
                 <p className="text-xs text-taskly-muted">{new Date(entry.createdAt).toLocaleString()}</p>
               </div>

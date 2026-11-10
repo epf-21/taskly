@@ -8,10 +8,10 @@ export const Textarea = ({
   return (
     <textarea
       className={cn(
-        "min-h-24 w-full resize-y rounded-xl border border-taskly bg-taskly-surface-muted px-3.5 py-2.5 text-sm text-taskly-foreground outline-none transition placeholder:text-taskly-muted focus:border-brand-500 focus:bg-taskly-surface",
+        "min-h-24 w-full resize-y rounded-lg border border-taskly-strong bg-taskly-surface-muted px-3.5 py-2.5 text-sm text-taskly-foreground outline-none transition-colors placeholder:text-taskly-subtle focus:border-brand-400 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger aria-invalid:focus:border-danger",
         className,
       )}
       {...props}
-    />
+    ></textarea>
   );
 };

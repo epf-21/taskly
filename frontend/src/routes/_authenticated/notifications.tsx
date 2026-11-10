@@ -25,7 +25,7 @@ function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-taskly-brand">Activity center</p>
+          <p className="text-sm font-medium text-taskly-brand">Activity center</p>
           <h1 className="text-3xl font-bold text-taskly-foreground">Notifications</h1>
         </div>
         <Button variant="secondary" onClick={() => markAll.mutate()} disabled={!notifications.some((item) => !item.readAt)}>
@@ -41,7 +41,10 @@ function NotificationsPage() {
             const title = typeof notification.payload.taskTitle === "string" ? notification.payload.taskTitle : "Taskly activity";
             const content = `${notification.type.replaceAll("_", " ")}: ${title}`;
             return (
-              <Card key={notification.id} className={`p-4 ${notification.readAt ? "opacity-70" : "border-taskly-brand"}`}>
+              <Card
+                key={notification.id}
+                className={`p-4 ${notification.readAt ? "opacity-70" : "border-brand-500/40"}`}
+              >
                 <div className="flex items-start gap-3">
                   <Bell size={18} className="mt-1 text-taskly-brand" />
                   <div className="min-w-0 flex-1">

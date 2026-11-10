@@ -41,7 +41,12 @@ export const ModalDelete = ({
           <p className="text-sm leading-6 text-taskly-muted">{description}</p>
         </div>
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="ghost" onClick={onClose} disabled={isAccepting}>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onClose}
+            disabled={isAccepting}
+          >
             Cancel
           </Button>
           <Button
