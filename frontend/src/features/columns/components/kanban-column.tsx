@@ -34,7 +34,7 @@ export const KanbanColumn = ({
     <section
       ref={setNodeRef}
       className={cn(
-        "flex w-[19rem] min-w-[19rem] flex-col rounded-xl border bg-taskly-surface-muted transition-colors",
+        "flex group flex-1 min-w-[19rem] flex-col rounded-xl border bg-taskly-surface-muted transition-colors",
         isOver ? "border-brand-500/50 bg-taskly-surface" : "border-taskly",
       )}
     >
@@ -71,6 +71,15 @@ export const KanbanColumn = ({
                   <Pencil size={13} aria-hidden="true" /> Edit
                 </button>
               )}
+              {canEdit && (
+                <button
+                  type="button"
+                  onClick={onAddTask}
+                  className="flex w-full cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-2 py-1.5 text-left text-xs text-taskly-foreground hover:bg-taskly-surface-muted"
+                >
+                  <Plus size={13} aria-hidden="true" /> Add task
+                </button>
+              )}
               {canManage && (
                 <button
                   type="button"
@@ -97,8 +106,8 @@ export const KanbanColumn = ({
             />
           ))}
           {count === 0 && (
-            <p className="rounded-lg border border-dashed border-taskly-strong/70 px-3 py-6 text-center text-[11px] text-taskly-subtle">
-              No tasks yet
+            <p className="text-center text-[11px] text-taskly-subtle py-6">
+              No task yet
             </p>
           )}
         </div>
@@ -107,7 +116,7 @@ export const KanbanColumn = ({
         <button
           type="button"
           onClick={onAddTask}
-          className="mx-2 mb-2 flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2 text-xs font-medium text-taskly-muted transition-colors hover:bg-taskly-surface hover:text-taskly-foreground"
+          className="mx-2 mb-2 flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg bg-taskly-surface px-2 text-xs font-medium text-taskly-muted opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 hover:text-taskly-foreground"
         >
           <Plus size={14} aria-hidden="true" /> Add task
         </button>

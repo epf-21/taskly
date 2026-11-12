@@ -71,7 +71,8 @@ export const WorkspaceBoards = ({
           <Users size={17} className="text-taskly-muted" aria-hidden="true" />
         </div>
         {isLoading ? (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <Skeleton className="h-24" />
             <Skeleton className="h-24" />
             <Skeleton className="h-24" />
           </div>
@@ -86,7 +87,7 @@ export const WorkspaceBoards = ({
             }
           />
         ) : boards?.length ? (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {boards.map((board) => (
               <BoardCard
                 key={board.id}

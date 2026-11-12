@@ -35,7 +35,7 @@ function NotificationsPage() {
       {notifications.length === 0 ? (
         <EmptyState title="You're all caught up" description="New assignments, mentions and reminders will appear here." />
       ) : (
-        <div className="space-y-3">
+        <div className="grid gap-3 xl:grid-cols-2">
           {notifications.map((notification) => {
             const taskId = typeof notification.payload.taskId === "string" ? notification.payload.taskId : null;
             const title = typeof notification.payload.taskTitle === "string" ? notification.payload.taskTitle : "Taskly activity";

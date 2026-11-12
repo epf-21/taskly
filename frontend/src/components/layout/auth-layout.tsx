@@ -17,7 +17,7 @@ export const AuthLayout = () => {
             onNavigate={() => setMobileMenuOpen(false)}
           />
 
-          <div className="mx-auto max-w-7xl p-5 sm:p-8">
+          <div className="w-full p-5 sm:p-8">
             <Outlet />
           </div>
         </main>

@@ -138,9 +138,11 @@ export const KanbanBoard = ({
               <button
                 type="button"
                 onClick={() => setColumnDialog("new")}
-                className="flex h-9 shrink-0 cursor-pointer items-center gap-1.5 self-start rounded-lg border border-taskly bg-taskly-surface px-3 text-xs font-medium text-taskly-muted transition-colors hover:border-taskly-strong hover:bg-taskly-surface-muted hover:text-taskly-foreground"
+                aria-label="Add column"
+                title="Add column"
+                className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center self-start rounded-lg border border-taskly bg-taskly-surface text-taskly-muted transition-colors hover:border-taskly-strong hover:bg-taskly-surface-muted hover:text-taskly-foreground"
               >
-                <Plus size={14} aria-hidden="true" /> Add column
+                <Plus size={16} aria-hidden="true" />
               </button>
             )}
           </div>

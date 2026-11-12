@@ -13,7 +13,7 @@ export const DashboardSkeleton = () => {
         <Skeleton className="h-32" />
         <Skeleton className="h-32" />
       </div>
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)]">
         <Skeleton className="h-96" />
         <Skeleton className="h-96" />
       </div>
