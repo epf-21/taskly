@@ -171,6 +171,18 @@ export const BoardPage = () => {
           await createColumn.mutateAsync({ name });
           toast.success("Column created");
         }}
+        onCreateDefaultColumns={async () => {
+          try {
+            for (const name of ["To do", "In progress", "Done"]) {
+              await createColumn.mutateAsync({ name });
+            }
+            toast.success("Default columns added");
+          } catch (error) {
+            toast.error(
+              getApiErrorMessage(error, "Unable to add default columns"),
+            );
+          }
+        }}
         onEditColumn={async (column) => {
           await updateColumn.mutateAsync({
             columnId: column.id,

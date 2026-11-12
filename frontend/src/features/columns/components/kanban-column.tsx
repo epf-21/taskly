@@ -5,7 +5,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Button } from "@/components/ui";
+import { cn } from "@/utils/cn";
 import { TaskCard } from "@/features/tasks/components";
 import type { Task } from "@/features/tasks/tasks.type";
 
@@ -26,37 +26,47 @@ export const KanbanColumn = ({
   onAddTask: () => void;
   onTaskOpen: (task: Task) => void;
 }) => {
-  const { setNodeRef } = useDroppable({ id: column.id });
+  const { setNodeRef, isOver } = useDroppable({ id: column.id });
+  const count = column.tasks.length;
+  const overLimit = column.wipLimit != null && count > column.wipLimit;
 
   return (
     <section
       ref={setNodeRef}
-      className="flex min-h-40 w-72 min-w-72 flex-col rounded-xl border border-taskly bg-taskly-surface-muted"
+      className={cn(
+        "flex w-[19rem] min-w-[19rem] flex-col rounded-xl border bg-taskly-surface-muted transition-colors",
+        isOver ? "border-brand-500/50 bg-taskly-surface" : "border-taskly",
+      )}
     >
-      <div className="flex items-center justify-between gap-2 border-b border-taskly px-4 py-3">
+      <div className="flex items-start justify-between gap-2 border-b border-taskly px-3.5 py-3">
         <div className="min-w-0">
-          <h3 className="truncate font-semibold text-taskly-foreground">
+          <h3 className="truncate text-sm font-semibold text-taskly-foreground">
             {column.name}
           </h3>
-          <p className="text-xs text-taskly-subtle">
-            {column.tasks.length} tasks
-            {column.wipLimit ? ` / ${column.wipLimit}` : ""}
+          <p
+            className={cn(
+              "mt-0.5 text-[11px] tabular-nums",
+              overLimit ? "text-taskly-danger" : "text-taskly-subtle",
+            )}
+          >
+            {count} {count === 1 ? "task" : "tasks"}
+            {column.wipLimit != null && ` / ${column.wipLimit}`}
           </p>
         </div>
         {(canManage || canEdit) && (
-          <details className="relative">
+          <details className="relative -mr-1">
             <summary
-              className="cursor-pointer list-none rounded p-1 text-taskly-muted transition-colors hover:text-taskly-foreground"
+              className="flex h-7 w-7 cursor-pointer list-none items-center justify-center rounded-md text-taskly-subtle transition-colors hover:bg-taskly-surface hover:text-taskly-foreground"
               aria-label={`Column actions for ${column.name}`}
             >
-              <MoreHorizontal size={17} aria-hidden="true" />
+              <MoreHorizontal size={16} aria-hidden="true" />
             </summary>
-            <div className="absolute right-0 top-8 z-10 min-w-32 rounded-lg border border-taskly-strong bg-taskly-surface p-1 shadow-xl shadow-black/40">
+            <div className="absolute right-0 top-8 z-20 min-w-36 rounded-lg border border-taskly-strong bg-taskly-surface p-1 shadow-xl shadow-black/40">
               {canEdit && (
                 <button
                   type="button"
                   onClick={onEdit}
-                  className="flex w-full cursor-pointer items-center gap-2 whitespace-nowrap rounded px-2 py-2 text-left text-xs text-taskly-foreground hover:bg-taskly-surface-muted"
+                  className="flex w-full cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-2 py-1.5 text-left text-xs text-taskly-foreground hover:bg-taskly-surface-muted"
                 >
                   <Pencil size={13} aria-hidden="true" /> Edit
                 </button>
@@ -65,7 +75,7 @@ export const KanbanColumn = ({
                 <button
                   type="button"
                   onClick={onDelete}
-                  className="flex w-full cursor-pointer items-center gap-2 whitespace-nowrap rounded px-2 py-2 text-left text-xs text-taskly-danger hover:bg-red-500/10"
+                  className="flex w-full cursor-pointer items-center gap-2 whitespace-nowrap rounded-md px-2 py-1.5 text-left text-xs text-taskly-danger hover:bg-danger/10"
                 >
                   <Trash2 size={13} aria-hidden="true" /> Delete
                 </button>
@@ -78,7 +88,7 @@ export const KanbanColumn = ({
         items={column.tasks.map((task) => task.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="flex flex-1 flex-col gap-2 p-3">
+        <div className="flex flex-1 flex-col gap-2 p-2.5">
           {column.tasks.map((task) => (
             <TaskCard
               key={task.id}
@@ -86,21 +96,21 @@ export const KanbanColumn = ({
               onOpen={() => onTaskOpen(task)}
             />
           ))}
-          {column.tasks.length === 0 && (
-            <p className="rounded-lg border border-dashed border-taskly-strong px-3 py-6 text-center text-xs text-taskly-subtle">
+          {count === 0 && (
+            <p className="rounded-lg border border-dashed border-taskly-strong/70 px-3 py-6 text-center text-[11px] text-taskly-subtle">
               No tasks yet
             </p>
           )}
         </div>
       </SortableContext>
       {canEdit && (
-        <Button
-          variant="ghost"
-          className="m-2 justify-start"
+        <button
+          type="button"
           onClick={onAddTask}
+          className="mx-2 mb-2 flex min-h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2 text-xs font-medium text-taskly-muted transition-colors hover:bg-taskly-surface hover:text-taskly-foreground"
         >
-          <Plus size={15} aria-hidden="true" /> Add task
-        </Button>
+          <Plus size={14} aria-hidden="true" /> Add task
+        </button>
       )}
     </section>
   );
