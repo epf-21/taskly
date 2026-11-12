@@ -95,11 +95,14 @@ describe('tablero y columnas', () => {
       .get(`/boards/${board.id}`)
       .set(...authHeader(owner.tokens.accessToken))
       .expect(200)
-      .expect(({ body }) =>
+      .expect(({ body }) => {
         expect(body).toEqual(
           expect.objectContaining({ id: board.id, columns: expect.any(Array) }),
-        ),
-      );
+        );
+        expect(
+          body.columns.map((column: { name: string }) => column.name),
+        ).toEqual(['To do', 'In progress', 'Done']);
+      });
 
     await request(e2eApp.server)
       .patch(`/boards/${board.id}`)

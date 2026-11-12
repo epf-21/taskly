@@ -61,6 +61,11 @@ describe('BoardsService', () => {
         name: 'Tablero principal',
         description: undefined,
         createdBy: 'u1',
+        columns: [
+          { name: 'To do', position: 1024 },
+          { name: 'In progress', position: 2048 },
+          { name: 'Done', position: 3072 },
+        ],
       });
       expect(result.id).toBe('b-1');
     });

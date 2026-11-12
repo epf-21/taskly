@@ -6,6 +6,12 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { BoardDetail, BoardsRepository } from './boards.repository';
 
+const DEFAULT_COLUMNS = [
+  { name: 'To do', position: 1024 },
+  { name: 'In progress', position: 2048 },
+  { name: 'Done', position: 3072 },
+];
+
 @Injectable()
 export class BoardsService {
   constructor(
@@ -23,6 +29,7 @@ export class BoardsService {
       name: dto.name,
       description: dto.description,
       createdBy: userId,
+      columns: DEFAULT_COLUMNS,
     });
 
     await this.activityService.log({

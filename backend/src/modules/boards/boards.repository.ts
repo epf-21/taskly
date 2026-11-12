@@ -19,8 +19,16 @@ export class BoardsRepository {
     name: string;
     description?: string;
     createdBy: string;
+    columns?: { name: string; position: number }[];
   }): Promise<BoardModel> {
-    return this.prisma.board.create({ data });
+    const { columns, ...board } = data;
+
+    return this.prisma.board.create({
+      data: {
+        ...board,
+        ...(columns?.length ? { columns: { create: columns } } : {}),
+      },
+    });
   }
 
   findManyByWorkspace(
